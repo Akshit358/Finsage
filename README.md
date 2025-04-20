@@ -6,7 +6,7 @@ FinSage is an innovative financial intelligence platform that combines AI, block
 
 ## 📁 Project Structure
 
-
+```bash
 finsage/
 ├── backend/
 │   ├── app/
@@ -19,7 +19,7 @@ finsage/
 │   └── README.md
 └── frontend/
     └── [React or other frontend - separate repo]
-
+```
 
 ---
 
