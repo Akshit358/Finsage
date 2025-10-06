@@ -1,0 +1,28 @@
+2025-10-06 21:52:50 | ERROR    | app.routes.status:health_check:58 - Health check failed: 4 validation errors for HealthStatus
+services.ai_service
+  Input should be a valid string [type=string_type, input_value={'name': 'AI Service', 's...stment_horizon_years']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.blockchain_service
+  Input should be a valid string [type=string_type, input_value={'name': 'Blockchain Serv..., 'latest_block': None}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.database
+  Input should be a valid string [type=string_type, input_value={'name': 'Database', 'sta...ented', 'details': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.external_apis
+  Input should be a valid string [type=string_type, input_value={'name': 'External APIs',...ented', 'details': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+2025-10-06 21:52:50 | ERROR    | app.main:http_exception_handler:107 - HTTP 500: Health check failed - http://testserver/api/v1/status/health
+2025-10-06 22:00:09 | ERROR    | app.routes.status:health_check:58 - Health check failed: 4 validation errors for HealthStatus
+services.ai_service
+  Input should be a valid string [type=string_type, input_value={'name': 'AI Service', 's...stment_horizon_years']}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.blockchain_service
+  Input should be a valid string [type=string_type, input_value={'name': 'Blockchain Serv..., 'latest_block': None}}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.database
+  Input should be a valid string [type=string_type, input_value={'name': 'Database', 'sta...ented', 'details': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+services.external_apis
+  Input should be a valid string [type=string_type, input_value={'name': 'External APIs',...ented', 'details': None}, input_type=dict]
+    For further information visit https://errors.pydantic.dev/2.11/v/string_type
+2025-10-06 22:00:09 | ERROR    | app.main:http_exception_handler:107 - HTTP 500: Health check failed - http://localhost:8000/api/v1/status/health

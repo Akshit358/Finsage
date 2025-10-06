@@ -3,7 +3,8 @@ Environment configuration loader using Pydantic.
 Handles all environment variables and application settings.
 """
 
-from pydantic import BaseSettings, Field
+from pydantic_settings import BaseSettings
+from pydantic import Field
 from typing import Optional
 import os
 
@@ -38,6 +39,13 @@ class Settings(BaseSettings):
     # External API settings
     alpaca_api_key: str = Field(default="", env="ALPACA_API_KEY")
     alpaca_secret_key: str = Field(default="", env="ALPACA_SECRET_KEY")
+    
+    # Redis settings
+    redis_url: str = Field(default="", env="REDIS_URL")
+    
+    # Logging settings
+    log_level: str = Field(default="INFO", env="LOG_LEVEL")
+    log_file: str = Field(default="logs/finsage.log", env="LOG_FILE")
     
     class Config:
         env_file = ".env"

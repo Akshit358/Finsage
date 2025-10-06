@@ -4,7 +4,7 @@ Centralizes all API endpoints under a single router.
 """
 
 from fastapi import APIRouter
-from app.routes import status, prediction, portfolio, blockchain
+from app.routes import status, prediction, portfolio, blockchain, advanced_features
 
 # Create main API router
 api_router = APIRouter()
@@ -14,3 +14,4 @@ api_router.include_router(status.router)
 api_router.include_router(prediction.router)
 api_router.include_router(portfolio.router)
 api_router.include_router(blockchain.router)
+api_router.include_router(advanced_features.router)
