@@ -1143,17 +1143,17 @@ function App() {
               <div className="strategy-summary">
                 <div className="summary-card">
                   <h3>📈 Expected Annual Return</h3>
-                  <div className="return-value">{predictionResult.expected_return}%</div>
+                  <div className="return-value">{predictionResult.expected_return || 0}%</div>
                   <p>Based on your risk profile and market conditions</p>
             </div>
                 <div className="summary-card">
                   <h3>🛡️ Risk Level</h3>
-                  <div className="risk-value">{predictionResult.risk_level}</div>
+                  <div className="risk-value">{predictionResult.risk_level || 'Unknown'}</div>
                   <p>Optimized for your age and financial situation</p>
             </div>
                 <div className="summary-card">
                   <h3>🎯 Confidence Score</h3>
-                  <div className="confidence-value">{Math.round(predictionResult.confidence_score)}%</div>
+                  <div className="confidence-value">{Math.round(predictionResult.confidence_score || 0)}%</div>
                   <p>How confident we are in this recommendation</p>
                 </div>
             </div>
@@ -1162,14 +1162,14 @@ function App() {
             <div className="investment-categories">
               <h2>💼 Recommended Investment Categories</h2>
               <div className="categories-grid">
-                {predictionResult.investment_categories?.map((category, index) => (
+                {(predictionResult.investment_categories || []).map((category, index) => (
                   <div key={index} className="category-card">
                     <div className="category-header">
                       <h3>{category.name}</h3>
                       <div className="category-percentage">{category.allocation}%</div>
                 </div>
                     <div className="category-amount">
-                      ${category.amount.toLocaleString()}
+                      ${(category.amount || 0).toLocaleString()}
                     </div>
                     <div className="category-explanation">
                       <h4>Why This Investment?</h4>
@@ -1178,7 +1178,7 @@ function App() {
                     <div className="category-benefits">
                       <h4>Key Benefits:</h4>
                       <ul>
-                        {category.benefits.map((benefit, idx) => (
+                        {(category.benefits || []).map((benefit, idx) => (
                           <li key={idx}>{benefit}</li>
                         ))}
                       </ul>
@@ -1186,7 +1186,7 @@ function App() {
                     <div className="category-risks">
                       <h4>Risks to Consider:</h4>
                       <ul>
-                        {category.risks.map((risk, idx) => (
+                        {(category.risks || []).map((risk, idx) => (
                           <li key={idx}>{risk}</li>
                         ))}
                       </ul>
@@ -1199,12 +1199,12 @@ function App() {
             <div className="age-specific-advice">
               <h2>👥 Age-Specific Financial Advice</h2>
               <div className="advice-card">
-                <h3>{predictionResult.age_advice?.title}</h3>
-                <p>{predictionResult.age_advice?.description}</p>
+                <h3>{predictionResult.age_advice?.title || 'Age-Specific Financial Advice'}</h3>
+                <p>{predictionResult.age_advice?.description || 'Personalized advice based on your age and financial situation.'}</p>
                 <div className="advice-tips">
                   <h4>💡 Key Tips for Your Age Group:</h4>
                   <ul>
-                    {predictionResult.age_advice?.tips.map((tip, idx) => (
+                    {(predictionResult.age_advice?.tips || []).map((tip, idx) => (
                       <li key={idx}>{tip}</li>
                     ))}
                   </ul>
@@ -1218,23 +1218,23 @@ function App() {
                 <div className="metric-card">
                   <h3>Emergency Fund Status</h3>
                   <div className="metric-value">
-                    {predictionResult.emergency_fund_status}
+                    {predictionResult.emergency_fund_status || 'Unknown'}
                   </div>
-                  <p>{predictionResult.emergency_fund_advice}</p>
+                  <p>{predictionResult.emergency_fund_advice || 'Please complete your financial profile to get personalized advice.'}</p>
                 </div>
                 <div className="metric-card">
                   <h3>Debt-to-Income Ratio</h3>
                   <div className="metric-value">
-                    {predictionResult.debt_ratio}%
+                    {predictionResult.debt_ratio || 0}%
                   </div>
-                  <p>{predictionResult.debt_advice}</p>
+                  <p>{predictionResult.debt_advice || 'Please complete your financial profile to get personalized advice.'}</p>
                 </div>
                 <div className="metric-card">
                   <h3>Recommended Monthly Investment</h3>
                   <div className="metric-value">
-                    ${predictionResult.recommended_monthly_investment.toLocaleString()}
+                    ${(predictionResult.recommended_monthly_investment || 0).toLocaleString()}
                   </div>
-                  <p>{predictionResult.investment_advice}</p>
+                  <p>{predictionResult.investment_advice || 'Please complete your financial profile to get personalized advice.'}</p>
                 </div>
               </div>
             </div>
@@ -1242,7 +1242,7 @@ function App() {
             <div className="action-plan">
               <h2>📋 Your 30-Day Action Plan</h2>
               <div className="action-steps">
-                {predictionResult.action_plan?.map((step, index) => (
+                {(predictionResult.action_plan || []).map((step, index) => (
                   <div key={index} className="action-step">
                     <div className="step-number">{index + 1}</div>
                     <div className="step-content">
