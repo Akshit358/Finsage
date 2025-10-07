@@ -241,3 +241,4 @@ async def get_watchlist(
     except Exception as e:
         app_logger.error(f"Error fetching watchlist: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve watchlist")
+

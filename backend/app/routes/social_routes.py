@@ -305,3 +305,4 @@ async def get_educational_content(
     except Exception as e:
         app_logger.error(f"Error fetching educational content: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve educational content")
+

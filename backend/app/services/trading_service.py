@@ -489,3 +489,4 @@ class TradingService:
             "max_drawdown": round(random.uniform(-20, -5), 2),
             "volatility": round(random.uniform(10, 30), 2)
         }
+

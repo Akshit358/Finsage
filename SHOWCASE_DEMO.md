@@ -214,3 +214,4 @@ curl http://localhost:8000/api/v1/blockchain/status
 **API Docs**: `http://localhost:8000/docs`
 
 **Everything is working perfectly!** 🎉
+

@@ -374,3 +374,4 @@ class SocialTradingService:
         ]
         
         return activities
+

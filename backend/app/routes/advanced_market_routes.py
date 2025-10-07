@@ -156,3 +156,4 @@ async def get_forex_data(
     except Exception as e:
         app_logger.error(f"Error fetching forex data: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to retrieve forex data")
+

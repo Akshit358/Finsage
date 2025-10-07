@@ -389,3 +389,4 @@ class AdvancedAIService:
             })
         
         return resources
+

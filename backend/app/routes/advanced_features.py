@@ -313,3 +313,4 @@ async def get_performance_analytics():
     except Exception as e:
         logger.error(f"Error getting performance analytics: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+

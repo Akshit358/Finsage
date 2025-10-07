@@ -26,3 +26,7 @@ services.external_apis
   Input should be a valid string [type=string_type, input_value={'name': 'External APIs',...ented', 'details': None}, input_type=dict]
     For further information visit https://errors.pydantic.dev/2.11/v/string_type
 2025-10-06 22:00:09 | ERROR    | app.main:http_exception_handler:107 - HTTP 500: Health check failed - http://localhost:8000/api/v1/status/health
+2025-10-06 23:14:08 | ERROR    | app.routes.trading_routes:get_technical_analysis:134 - Error performing technical analysis: name 'random' is not defined
+2025-10-06 23:14:08 | ERROR    | app.main:http_exception_handler:107 - HTTP 500: Failed to perform technical analysis - http://localhost:8000/api/v1/trading/analysis/AAPL
+2025-10-06 23:14:23 | ERROR    | app.main:starlette_exception_handler:122 - Starlette HTTP 404: Not Found - http://localhost:8000/api/v1/advanced/sentiment/analyze
+2025-10-06 23:14:28 | ERROR    | app.main:starlette_exception_handler:122 - Starlette HTTP 404: Not Found - http://localhost:8000/api/v1/advanced/market-data/AAPL

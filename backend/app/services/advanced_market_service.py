@@ -295,3 +295,4 @@ class AdvancedMarketService:
             return "Bearish"
         else:
             return "Very Bearish"
+
