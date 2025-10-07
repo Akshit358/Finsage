@@ -26,7 +26,10 @@ import {
   BookOpen,
   BarChart,
   Bell,
-  AlertTriangle
+  AlertTriangle,
+  TrendingUp as AnalyticsUp,
+  TrendingDown as AnalyticsDown,
+  Activity as AnalyticsActivity
 } from 'lucide-react';
 import './App.css';
 
@@ -1821,7 +1824,7 @@ function App() {
       </div>
 
       <motion.div 
-        className={`sidebar ${sidebarOpen ? 'open' : ''}`}
+        className="sidebar"
         initial={{ x: -280 }}
         animate={{ x: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
