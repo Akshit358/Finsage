@@ -8,6 +8,184 @@ import json
 import random
 import time
 from http.server import HTTPServer, BaseHTTPRequestHandler
+
+# Helper functions for enhanced AI predictions
+def get_investment_explanation(asset_type, age, risk_tolerance):
+    explanations = {
+        'Government Bonds': f"Government bonds provide stable, guaranteed returns perfect for {age}-year-olds seeking capital preservation. They're backed by the full faith and credit of the government, making them the safest investment option.",
+        'Corporate Bonds': f"Corporate bonds offer higher yields than government bonds while maintaining relatively low risk. For someone your age, they provide steady income with moderate risk exposure.",
+        'Blue Chip Stocks': f"Blue chip stocks represent established, financially sound companies with a history of reliable performance. They're ideal for {risk_tolerance} investors seeking long-term growth with lower volatility.",
+        'Growth Stocks': f"Growth stocks focus on companies with above-average growth potential. Perfect for younger investors like you who can weather short-term volatility for long-term gains.",
+        'Technology Stocks': f"Tech stocks offer high growth potential in the digital economy. They're volatile but can provide exceptional returns for investors with a {risk_tolerance} risk profile.",
+        'S&P 500 Index Fund': f"An S&P 500 index fund gives you instant diversification across 500 of America's largest companies. It's the foundation of most successful long-term investment strategies.",
+        'Total Bond Market': f"Total bond market funds provide broad exposure to the entire bond market, offering stability and income generation for balanced portfolios.",
+        'International Stocks': f"International stocks provide geographic diversification and access to global growth opportunities, reducing your portfolio's dependence on the US market.",
+        'REITs': f"Real Estate Investment Trusts (REITs) give you exposure to real estate without owning property directly. They provide regular income and inflation protection.",
+        'Commodities': f"Commodities like gold and oil provide inflation hedge and portfolio diversification. They often move independently of stock markets.",
+        'Cryptocurrency': f"Crypto offers high growth potential but with significant volatility. Only suitable for {risk_tolerance} investors who can handle extreme price swings.",
+        'Small Cap Stocks': f"Small cap stocks represent smaller companies with high growth potential. They're riskier but can provide exceptional returns for long-term investors.",
+        'High-Yield Savings': f"High-yield savings accounts provide liquidity and safety for your emergency fund and short-term goals. They offer FDIC insurance up to $250,000.",
+        'Cash/CDs': f"Cash and CDs provide maximum safety and liquidity. Essential for emergency funds and short-term financial goals."
+    }
+    return explanations.get(asset_type, f"{asset_type} provides diversification and growth potential for your investment portfolio.")
+
+def get_investment_benefits(asset_type):
+    benefits_map = {
+        'Government Bonds': ['Guaranteed principal repayment', 'Regular interest payments', 'Tax advantages', 'Liquidity'],
+        'Corporate Bonds': ['Higher yields than government bonds', 'Regular income', 'Lower risk than stocks', 'Diversification'],
+        'Blue Chip Stocks': ['Dividend income', 'Long-term growth potential', 'Lower volatility', 'Liquidity'],
+        'Growth Stocks': ['High growth potential', 'Capital appreciation', 'Innovation exposure', 'Long-term wealth building'],
+        'Technology Stocks': ['Sector growth exposure', 'Innovation leadership', 'High return potential', 'Future-focused'],
+        'S&P 500 Index Fund': ['Instant diversification', 'Low fees', 'Market performance', 'Professional management'],
+        'Total Bond Market': ['Broad bond exposure', 'Income generation', 'Risk reduction', 'Professional management'],
+        'International Stocks': ['Geographic diversification', 'Currency exposure', 'Global growth', 'Risk reduction'],
+        'REITs': ['Real estate exposure', 'Regular dividends', 'Inflation hedge', 'Professional management'],
+        'Commodities': ['Inflation protection', 'Portfolio diversification', 'Store of value', 'Global demand'],
+        'Cryptocurrency': ['High growth potential', 'Decentralized', '24/7 trading', 'Innovation exposure'],
+        'Small Cap Stocks': ['High growth potential', 'Undervalued opportunities', 'Market inefficiencies', 'Long-term gains'],
+        'High-Yield Savings': ['FDIC insurance', 'Liquidity', 'No risk', 'Easy access'],
+        'Cash/CDs': ['Maximum safety', 'Guaranteed returns', 'Liquidity', 'No risk']
+    }
+    return benefits_map.get(asset_type, ['Diversification', 'Growth potential', 'Professional management'])
+
+def get_investment_risks(asset_type):
+    risks_map = {
+        'Government Bonds': ['Interest rate risk', 'Inflation risk', 'Lower returns', 'Opportunity cost'],
+        'Corporate Bonds': ['Credit risk', 'Interest rate risk', 'Liquidity risk', 'Default risk'],
+        'Blue Chip Stocks': ['Market volatility', 'Company-specific risk', 'Economic downturns', 'Dividend cuts'],
+        'Growth Stocks': ['High volatility', 'Valuation risk', 'Market timing', 'Sector concentration'],
+        'Technology Stocks': ['Extreme volatility', 'Regulatory risk', 'Competition', 'Valuation bubbles'],
+        'S&P 500 Index Fund': ['Market risk', 'No downside protection', 'Index concentration', 'Tracking error'],
+        'Total Bond Market': ['Interest rate risk', 'Credit risk', 'Inflation risk', 'Liquidity risk'],
+        'International Stocks': ['Currency risk', 'Political risk', 'Regulatory differences', 'Liquidity issues'],
+        'REITs': ['Interest rate sensitivity', 'Real estate cycles', 'Liquidity risk', 'Management risk'],
+        'Commodities': ['High volatility', 'Storage costs', 'No income generation', 'Speculation risk'],
+        'Cryptocurrency': ['Extreme volatility', 'Regulatory uncertainty', 'Technology risk', 'No intrinsic value'],
+        'Small Cap Stocks': ['High volatility', 'Liquidity risk', 'Information asymmetry', 'Higher failure rates'],
+        'High-Yield Savings': ['Low returns', 'Inflation erosion', 'Opportunity cost', 'Rate changes'],
+        'Cash/CDs': ['Inflation risk', 'Low returns', 'Opportunity cost', 'Rate changes']
+    }
+    return risks_map.get(asset_type, ['Market risk', 'Volatility', 'Economic factors'])
+
+def get_age_specific_advice(age_bracket, age):
+    advice_map = {
+        'young_professional': {
+            'title': f'Young Professional (Age {age}) - Build Your Foundation',
+            'description': f'At {age}, you have the most valuable asset: time. Your investments have decades to compound, making this the perfect time to take calculated risks and build wealth.',
+            'tips': [
+                'Start investing early - even small amounts compound significantly over time',
+                'Take advantage of employer 401(k) matching - it\'s free money',
+                'Consider a Roth IRA for tax-free growth over 30+ years',
+                'Don\'t be afraid of market volatility - you have time to recover',
+                'Focus on growth investments like index funds and growth stocks',
+                'Build an emergency fund of 3-6 months expenses',
+                'Consider real estate investment for diversification'
+            ]
+        },
+        'early_career': {
+            'title': f'Early Career (Age {age}) - Accelerate Growth',
+            'description': f'You\'re in your prime earning years with {65-age} years until retirement. This is the time to maximize your investment contributions and take advantage of compound growth.',
+            'tips': [
+                'Maximize your 401(k) contributions - aim for 15-20% of income',
+                'Consider a Health Savings Account (HSA) for triple tax benefits',
+                'Diversify with international investments for global exposure',
+                'Consider real estate investment through REITs or direct ownership',
+                'Review and rebalance your portfolio annually',
+                'Increase emergency fund to 6 months of expenses',
+                'Consider starting a side business for additional income streams'
+            ]
+        },
+        'mid_career': {
+            'title': f'Mid-Career (Age {age}) - Balance Growth and Stability',
+            'description': f'You\'re in your peak earning years with {65-age} years until retirement. Balance aggressive growth with some stability as you approach your financial goals.',
+            'tips': [
+                'Consider catch-up contributions to retirement accounts',
+                'Diversify with bonds and stable investments (20-30%)',
+                'Review your asset allocation - consider target-date funds',
+                'Maximize tax-advantaged accounts (401k, IRA, HSA)',
+                'Consider college savings plans if you have children',
+                'Evaluate life insurance needs for family protection',
+                'Start thinking about estate planning and wills'
+            ]
+        },
+        'pre_retirement': {
+            'title': f'Pre-Retirement (Age {age}) - Preserve and Prepare',
+            'description': f'You\'re {65-age} years from retirement. Focus on capital preservation while maintaining some growth to outpace inflation.',
+            'tips': [
+                'Increase bond allocation to 40-50% for stability',
+                'Consider annuities for guaranteed income streams',
+                'Maximize catch-up contributions ($7,500 for 401k, $1,000 for IRA)',
+                'Review and update your retirement budget',
+                'Consider downsizing or relocating for lower costs',
+                'Evaluate long-term care insurance options',
+                'Create a detailed retirement income plan'
+            ]
+        },
+        'retirement': {
+            'title': f'Retirement (Age {age}) - Income and Preservation',
+            'description': f'You\'re in retirement. Focus on generating reliable income while preserving capital for your remaining years.',
+            'tips': [
+                'Maintain 50-60% in bonds and stable investments',
+                'Consider dividend-paying stocks for regular income',
+                'Use the 4% rule for safe withdrawal rates',
+                'Keep 2-3 years of expenses in cash/CDs',
+                'Consider immediate annuities for guaranteed income',
+                'Review and adjust your portfolio annually',
+                'Consider charitable giving strategies for tax benefits'
+            ]
+        }
+    }
+    return advice_map.get(age_bracket, advice_map['mid_career'])
+
+def get_action_plan(age_bracket, financial_goals, debt_ratio, emergency_fund_needed):
+    base_plan = [
+        {
+            'title': 'Emergency Fund Assessment',
+            'description': f'Evaluate your current emergency fund. You need ${emergency_fund_needed:,.0f} (6 months of expenses) for financial security.',
+            'priority': 'high'
+        },
+        {
+            'title': 'Debt Management Review',
+            'description': f'Your debt-to-income ratio is {debt_ratio:.1f}%. Keep it under 36% for optimal financial health.',
+            'priority': 'high' if debt_ratio > 36 else 'medium'
+        },
+        {
+            'title': 'Retirement Account Optimization',
+            'description': 'Maximize your 401(k) contributions, especially if your employer offers matching.',
+            'priority': 'high'
+        },
+        {
+            'title': 'Investment Account Setup',
+            'description': 'Open a brokerage account or IRA for additional investment opportunities.',
+            'priority': 'medium'
+        },
+        {
+            'title': 'Portfolio Rebalancing',
+            'description': 'Review and rebalance your portfolio to maintain your target asset allocation.',
+            'priority': 'medium'
+        }
+    ]
+    
+    if financial_goals == 'house':
+        base_plan.append({
+            'title': 'Home Buying Preparation',
+            'description': 'Research mortgage options, improve credit score, and save for down payment.',
+            'priority': 'high'
+        })
+    elif financial_goals == 'education':
+        base_plan.append({
+            'title': 'Education Fund Setup',
+            'description': 'Open a 529 plan or Education Savings Account for tax-advantaged education savings.',
+            'priority': 'high'
+        })
+    elif financial_goals == 'debt_payoff':
+        base_plan.append({
+            'title': 'Debt Payoff Strategy',
+            'description': 'Create a debt snowball or avalanche plan to eliminate high-interest debt quickly.',
+            'priority': 'high'
+        })
+    
+    return base_plan
 from urllib.parse import urlparse, parse_qs
 import threading
 import urllib.request
@@ -432,73 +610,98 @@ class FinSageHandler(BaseHTTPRequestHandler):
             try:
                 data = json.loads(post_data.decode('utf-8'))
                 
-                # Generate AI prediction based on input
+                # Enhanced AI prediction with comprehensive analysis
                 age = data.get('age', 30)
                 income = data.get('annual_income', 75000)
-                risk_tolerance = data.get('risk_tolerance', 'medium')
+                risk_tolerance = data.get('risk_tolerance', 'moderate')
                 horizon = data.get('investment_horizon_years', 10)
+                financial_goals = data.get('financial_goals', 'retirement')
+                dependents = data.get('dependents', 0)
+                debt_amount = data.get('debt_amount', 0)
+                monthly_expenses = data.get('monthly_expenses', 3000)
                 
-                # Simple AI logic based on inputs
-                base_confidence = 75
-                if age < 30:
-                    base_confidence += 10
-                elif age > 50:
-                    base_confidence -= 5
+                # Calculate financial health metrics
+                debt_ratio = (debt_amount / income * 100) if income > 0 else 0
+                emergency_fund_needed = monthly_expenses * 6
+                recommended_monthly_investment = max(income * 0.15 / 12, 500)
                 
-                if income > 100000:
-                    base_confidence += 5
-                elif income < 50000:
-                    base_confidence -= 5
+                # Age-based strategy
+                age_bracket = 'young_professional' if age < 30 else 'early_career' if age < 40 else 'mid_career' if age < 50 else 'pre_retirement' if age < 60 else 'retirement'
                 
-                if risk_tolerance == 'high':
-                    base_confidence += 5
-                elif risk_tolerance == 'low':
-                    base_confidence -= 10
-                
-                if horizon > 15:
-                    base_confidence += 10
-                elif horizon < 5:
-                    base_confidence -= 5
-                
-                confidence_score = max(60, min(95, base_confidence + random.randint(-5, 5)))
-                
-                # Generate expected return based on risk tolerance
-                if risk_tolerance == 'high':
-                    expected_return = round(random.uniform(8, 15), 2)
-                elif risk_tolerance == 'medium':
-                    expected_return = round(random.uniform(5, 10), 2)
-                else:
-                    expected_return = round(random.uniform(2, 6), 2)
-                
-                # Generate asset allocations
-                total_investment = income * 0.2  # Assume 20% of income for investment
-                asset_allocations = []
-                
-                if risk_tolerance == 'high':
-                    asset_allocations = [
-                        {"asset_type": "Stocks", "percentage": 70, "amount": total_investment * 0.7},
-                        {"asset_type": "Crypto", "percentage": 20, "amount": total_investment * 0.2},
-                        {"asset_type": "Bonds", "percentage": 10, "amount": total_investment * 0.1}
+                # Risk-adjusted returns and allocations
+                if risk_tolerance == 'conservative':
+                    base_return = 4.5
+                    confidence = 90
+                    allocations = [
+                        {'asset_type': 'Government Bonds', 'percentage': 40, 'amount': income * 0.2 * 0.4},
+                        {'asset_type': 'Corporate Bonds', 'percentage': 25, 'amount': income * 0.2 * 0.25},
+                        {'asset_type': 'Blue Chip Stocks', 'percentage': 20, 'amount': income * 0.2 * 0.2},
+                        {'asset_type': 'High-Yield Savings', 'percentage': 10, 'amount': income * 0.2 * 0.1},
+                        {'asset_type': 'REITs', 'percentage': 5, 'amount': income * 0.2 * 0.05}
                     ]
-                elif risk_tolerance == 'medium':
-                    asset_allocations = [
-                        {"asset_type": "Stocks", "percentage": 50, "amount": total_investment * 0.5},
-                        {"asset_type": "Bonds", "percentage": 30, "amount": total_investment * 0.3},
-                        {"asset_type": "REITs", "percentage": 20, "amount": total_investment * 0.2}
+                elif risk_tolerance == 'aggressive':
+                    base_return = 11.5
+                    confidence = 75
+                    allocations = [
+                        {'asset_type': 'Growth Stocks', 'percentage': 45, 'amount': income * 0.2 * 0.45},
+                        {'asset_type': 'Technology Stocks', 'percentage': 25, 'amount': income * 0.2 * 0.25},
+                        {'asset_type': 'Cryptocurrency', 'percentage': 15, 'amount': income * 0.2 * 0.15},
+                        {'asset_type': 'International Stocks', 'percentage': 10, 'amount': income * 0.2 * 0.1},
+                        {'asset_type': 'Small Cap Stocks', 'percentage': 5, 'amount': income * 0.2 * 0.05}
                     ]
-                else:
-                    asset_allocations = [
-                        {"asset_type": "Bonds", "percentage": 60, "amount": total_investment * 0.6},
-                        {"asset_type": "Stocks", "percentage": 30, "amount": total_investment * 0.3},
-                        {"asset_type": "Cash", "percentage": 10, "amount": total_investment * 0.1}
+                else:  # moderate
+                    base_return = 7.8
+                    confidence = 85
+                    allocations = [
+                        {'asset_type': 'S&P 500 Index Fund', 'percentage': 35, 'amount': income * 0.2 * 0.35},
+                        {'asset_type': 'Total Bond Market', 'percentage': 25, 'amount': income * 0.2 * 0.25},
+                        {'asset_type': 'International Stocks', 'percentage': 20, 'amount': income * 0.2 * 0.2},
+                        {'asset_type': 'REITs', 'percentage': 10, 'amount': income * 0.2 * 0.1},
+                        {'asset_type': 'Commodities', 'percentage': 5, 'amount': income * 0.2 * 0.05},
+                        {'asset_type': 'Cash/CDs', 'percentage': 5, 'amount': income * 0.2 * 0.05}
                     ]
+                
+                # Create comprehensive investment categories with explanations
+                investment_categories = []
+                for allocation in allocations:
+                    category = {
+                        'name': allocation['asset_type'],
+                        'allocation': allocation['percentage'],
+                        'amount': allocation['amount'],
+                        'explanation': get_investment_explanation(allocation['asset_type'], age, risk_tolerance),
+                        'benefits': get_investment_benefits(allocation['asset_type']),
+                        'risks': get_investment_risks(allocation['asset_type'])
+                    }
+                    investment_categories.append(category)
+                
+                # Age-specific advice
+                age_advice = get_age_specific_advice(age_bracket, age)
+                
+                # Financial health assessment
+                emergency_fund_status = "Excellent" if emergency_fund_needed <= 10000 else "Good" if emergency_fund_needed <= 25000 else "Needs Improvement"
+                emergency_fund_advice = f"You should have ${emergency_fund_needed:,.0f} in emergency savings (6 months of expenses)."
+                
+                debt_advice = "Excellent debt management!" if debt_ratio < 20 else "Good debt level" if debt_ratio < 36 else "Consider debt reduction before investing heavily."
+                
+                investment_advice = f"Based on your income, aim to invest ${recommended_monthly_investment:,.0f} monthly for optimal growth."
+                
+                # 30-day action plan
+                action_plan = get_action_plan(age_bracket, financial_goals, debt_ratio, emergency_fund_needed)
                 
                 response = {
-                    "confidence_score": confidence_score,
-                    "expected_return": expected_return,
+                    "expected_return": round(base_return, 1),
+                    "confidence_score": confidence,
                     "risk_level": risk_tolerance.title(),
-                    "asset_allocations": asset_allocations,
-                    "recommendation": f"Based on your {risk_tolerance} risk tolerance and {horizon}-year horizon, we recommend a diversified portfolio with {expected_return}% expected annual return.",
+                    "investment_categories": investment_categories,
+                    "age_advice": age_advice,
+                    "emergency_fund_status": emergency_fund_status,
+                    "emergency_fund_advice": emergency_fund_advice,
+                    "debt_ratio": round(debt_ratio, 1),
+                    "debt_advice": debt_advice,
+                    "recommended_monthly_investment": recommended_monthly_investment,
+                    "investment_advice": investment_advice,
+                    "action_plan": action_plan,
+                    "recommendation": f"Personalized {risk_tolerance} strategy optimized for your {age_bracket.replace('_', ' ')} profile with {len(allocations)} diversified investment categories.",
                     "timestamp": int(time.time())
                 }
                 

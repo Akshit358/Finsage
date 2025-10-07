@@ -436,7 +436,12 @@ function App() {
     age: 30,
     annual_income: 75000,
     risk_tolerance: 'medium',
-    investment_horizon_years: 10
+    investment_horizon_years: 10,
+    financial_goals: 'retirement',
+    dependents: 0,
+    debt_amount: 0,
+    monthly_expenses: 3000,
+    emergency_fund: 0
   });
   const [predictionResult, setPredictionResult] = useState(null);
   const [portfolio, setPortfolio] = useState(null);
@@ -1002,92 +1007,260 @@ function App() {
     </motion.div>
   );
 
-  const Predictions = () => (
+  const Predictions = () => {
+    const getAgeBracket = (age) => {
+      if (age < 30) return 'young_professional';
+      if (age < 40) return 'early_career';
+      if (age < 50) return 'mid_career';
+      if (age < 60) return 'pre_retirement';
+      return 'retirement';
+    };
+
+    const getInvestmentStrategy = (profile) => {
+      const ageBracket = getAgeBracket(profile.age);
+      const riskScore = profile.risk_tolerance === 'low' ? 1 : profile.risk_tolerance === 'medium' ? 2 : 3;
+      const incomeLevel = profile.annual_income < 50000 ? 'low' : profile.annual_income < 100000 ? 'medium' : 'high';
+      
+      return {
+        ageBracket,
+        riskScore,
+        incomeLevel,
+        emergencyFundNeeded: profile.monthly_expenses * 6,
+        maxDebtToIncome: profile.annual_income * 0.36,
+        recommendedMonthlyInvestment: Math.max(profile.annual_income * 0.15 / 12, 500)
+      };
+    };
+
+    return (
     <div className="predictions">
       <div className="section-header">
-        <h1>AI Investment Predictions</h1>
-        <p>Get personalized investment recommendations based on your profile</p>
+          <h1>🧠 AI Investment Intelligence</h1>
+          <p>Get personalized, age-appropriate investment strategies with detailed explanations</p>
       </div>
 
       <div className="prediction-form">
-        <h2>Your Investment Profile</h2>
+          <h2>📊 Your Financial Profile</h2>
         <div className="form-grid">
           <div className="form-group">
-            <label>Age</label>
+              <label>👤 Age</label>
             <input
               type="number"
               value={predictionData.age}
               onChange={(e) => setPredictionData({...predictionData, age: parseInt(e.target.value)})}
+                min="18"
+                max="80"
             />
+              <small>Your age determines your investment timeline and risk capacity</small>
           </div>
           <div className="form-group">
-            <label>Annual Income ($)</label>
+              <label>💰 Annual Income ($)</label>
             <input
               type="number"
               value={predictionData.annual_income}
               onChange={(e) => setPredictionData({...predictionData, annual_income: parseInt(e.target.value)})}
+                min="20000"
             />
+              <small>Helps determine how much you can invest monthly</small>
           </div>
           <div className="form-group">
-            <label>Risk Tolerance</label>
+              <label>🎯 Financial Goals</label>
+              <select
+                value={predictionData.financial_goals}
+                onChange={(e) => setPredictionData({...predictionData, financial_goals: e.target.value})}
+              >
+                <option value="retirement">Retirement Planning</option>
+                <option value="house">Buy a House</option>
+                <option value="education">Education Fund</option>
+                <option value="emergency">Emergency Fund</option>
+                <option value="wealth_building">Wealth Building</option>
+                <option value="debt_payoff">Debt Payoff</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>⚖️ Risk Tolerance</label>
             <select
               value={predictionData.risk_tolerance}
               onChange={(e) => setPredictionData({...predictionData, risk_tolerance: e.target.value})}
             >
-              <option value="low">Low Risk</option>
-              <option value="medium">Medium Risk</option>
-              <option value="high">High Risk</option>
+                <option value="conservative">Conservative (Preserve Capital)</option>
+                <option value="moderate">Moderate (Balanced Growth)</option>
+                <option value="aggressive">Aggressive (Maximum Growth)</option>
             </select>
           </div>
           <div className="form-group">
-            <label>Investment Horizon (years)</label>
+              <label>⏰ Investment Horizon (years)</label>
             <input
               type="number"
               value={predictionData.investment_horizon_years}
               onChange={(e) => setPredictionData({...predictionData, investment_horizon_years: parseInt(e.target.value)})}
-            />
+                min="1"
+                max="50"
+              />
+              <small>How long before you need this money?</small>
+            </div>
+            <div className="form-group">
+              <label>👨‍👩‍👧‍👦 Dependents</label>
+              <input
+                type="number"
+                value={predictionData.dependents}
+                onChange={(e) => setPredictionData({...predictionData, dependents: parseInt(e.target.value)})}
+                min="0"
+                max="10"
+              />
+              <small>Number of people financially dependent on you</small>
+            </div>
+            <div className="form-group">
+              <label>💳 Current Debt ($)</label>
+              <input
+                type="number"
+                value={predictionData.debt_amount}
+                onChange={(e) => setPredictionData({...predictionData, debt_amount: parseInt(e.target.value)})}
+                min="0"
+              />
+              <small>Total outstanding debt (credit cards, loans, etc.)</small>
+            </div>
+            <div className="form-group">
+              <label>🏠 Monthly Expenses ($)</label>
+              <input
+                type="number"
+                value={predictionData.monthly_expenses}
+                onChange={(e) => setPredictionData({...predictionData, monthly_expenses: parseInt(e.target.value)})}
+                min="500"
+              />
+              <small>Your monthly living expenses</small>
           </div>
         </div>
         
         <button className="predict-btn" onClick={getPrediction} disabled={loading}>
-          {loading ? 'Analyzing...' : 'Get AI Prediction'}
+            {loading ? '🤖 Analyzing Your Profile...' : '🚀 Get My Investment Strategy'}
         </button>
       </div>
 
       {predictionResult && (
         <div className="prediction-result">
-          <h2>AI Recommendation</h2>
-          <div className="recommendation-card">
-            <div className="confidence-score">
-              <span className="score-label">Confidence Score</span>
-              <span className="score-value">{Math.round(predictionResult.confidence_score)}%</span>
+            <div className="strategy-overview">
+              <h2>🎯 Your Personalized Investment Strategy</h2>
+              <div className="strategy-summary">
+                <div className="summary-card">
+                  <h3>📈 Expected Annual Return</h3>
+                  <div className="return-value">{predictionResult.expected_return}%</div>
+                  <p>Based on your risk profile and market conditions</p>
             </div>
-            <div className="expected-return">
-              <span className="return-label">Expected Return</span>
-              <span className="return-value">{predictionResult.expected_return}%</span>
+                <div className="summary-card">
+                  <h3>🛡️ Risk Level</h3>
+                  <div className="risk-value">{predictionResult.risk_level}</div>
+                  <p>Optimized for your age and financial situation</p>
             </div>
-            <div className="risk-assessment">
-              <span className="risk-label">Risk Assessment</span>
-              <span className="risk-value">{predictionResult.risk_level}</span>
+                <div className="summary-card">
+                  <h3>🎯 Confidence Score</h3>
+                  <div className="confidence-value">{Math.round(predictionResult.confidence_score)}%</div>
+                  <p>How confident we are in this recommendation</p>
+                </div>
             </div>
           </div>
           
-          <div className="asset-allocation">
-            <h3>Recommended Asset Allocation</h3>
-            <div className="allocation-grid">
-              {predictionResult.asset_allocations?.map((asset, index) => (
-                <div key={index} className="allocation-item">
-                  <div className="asset-name">{asset.asset_type}</div>
-                  <div className="asset-percentage">{asset.percentage}%</div>
-                  <div className="asset-amount">${asset.amount.toLocaleString()}</div>
+            <div className="investment-categories">
+              <h2>💼 Recommended Investment Categories</h2>
+              <div className="categories-grid">
+                {predictionResult.investment_categories?.map((category, index) => (
+                  <div key={index} className="category-card">
+                    <div className="category-header">
+                      <h3>{category.name}</h3>
+                      <div className="category-percentage">{category.allocation}%</div>
                 </div>
-              ))}
+                    <div className="category-amount">
+                      ${category.amount.toLocaleString()}
+                    </div>
+                    <div className="category-explanation">
+                      <h4>Why This Investment?</h4>
+                      <p>{category.explanation}</p>
+                    </div>
+                    <div className="category-benefits">
+                      <h4>Key Benefits:</h4>
+                      <ul>
+                        {category.benefits.map((benefit, idx) => (
+                          <li key={idx}>{benefit}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="category-risks">
+                      <h4>Risks to Consider:</h4>
+                      <ul>
+                        {category.risks.map((risk, idx) => (
+                          <li key={idx}>{risk}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="age-specific-advice">
+              <h2>👥 Age-Specific Financial Advice</h2>
+              <div className="advice-card">
+                <h3>{predictionResult.age_advice?.title}</h3>
+                <p>{predictionResult.age_advice?.description}</p>
+                <div className="advice-tips">
+                  <h4>💡 Key Tips for Your Age Group:</h4>
+                  <ul>
+                    {predictionResult.age_advice?.tips.map((tip, idx) => (
+                      <li key={idx}>{tip}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="financial-health-check">
+              <h2>🏥 Your Financial Health Check</h2>
+              <div className="health-metrics">
+                <div className="metric-card">
+                  <h3>Emergency Fund Status</h3>
+                  <div className="metric-value">
+                    {predictionResult.emergency_fund_status}
+                  </div>
+                  <p>{predictionResult.emergency_fund_advice}</p>
+                </div>
+                <div className="metric-card">
+                  <h3>Debt-to-Income Ratio</h3>
+                  <div className="metric-value">
+                    {predictionResult.debt_ratio}%
+                  </div>
+                  <p>{predictionResult.debt_advice}</p>
+                </div>
+                <div className="metric-card">
+                  <h3>Recommended Monthly Investment</h3>
+                  <div className="metric-value">
+                    ${predictionResult.recommended_monthly_investment.toLocaleString()}
+                  </div>
+                  <p>{predictionResult.investment_advice}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="action-plan">
+              <h2>📋 Your 30-Day Action Plan</h2>
+              <div className="action-steps">
+                {predictionResult.action_plan?.map((step, index) => (
+                  <div key={index} className="action-step">
+                    <div className="step-number">{index + 1}</div>
+                    <div className="step-content">
+                      <h4>{step.title}</h4>
+                      <p>{step.description}</p>
+                      <div className="step-priority">
+                        Priority: <span className={`priority ${step.priority}`}>{step.priority}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
         </div>
       )}
     </div>
   );
+  };
 
   const Portfolio = () => (
     <div className="portfolio">
