@@ -194,18 +194,18 @@ graph TB
     A --> D[Risk Analysis]
     A --> E[Rebalancing Alerts]
     
-    B --> F[Stocks: 40%]
-    B --> G[Bonds: 30%]
-    B --> H[Crypto: 20%]
-    B --> I[Real Estate: 10%]
+    B --> F["Stocks: 40%"]
+    B --> G["Bonds: 30%"]
+    B --> H["Crypto: 20%"]
+    B --> I["Real Estate: 10%"]
     
-    C --> J[Total Return: +12.5%]
-    C --> K[YTD Performance: +8.3%]
-    C --> L[Volatility: 15.2%]
+    C --> J["Total Return: +12.5%"]
+    C --> K["YTD Performance: +8.3%"]
+    C --> L["Volatility: 15.2%"]
     
-    D --> M[Sharpe Ratio: 1.8]
-    D --> N[Max Drawdown: -5.2%]
-    D --> O[VaR (95%): -3.1%]
+    D --> M["Sharpe Ratio: 1.8"]
+    D --> N["Max Drawdown: -5.2%"]
+    D --> O["VaR 95%: -3.1%"]
 ```
 
 **Key Features:**
@@ -717,16 +717,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Contact & Support
 
-**Primary Developer**: Akshit Tribbiani
+**Primary Developer**: Akshit Singh
 - **GitHub**: [@Akshit358](https://github.com/Akshit358)
-- **Email**: [Your Email]
-- **LinkedIn**: [Your LinkedIn Profile]
+- **Email**: akshit.singh0319@gmail.com
+- **LinkedIn**: www.linkedin.com/in/akshit-singh-aba4b51a6
 
-**Project Information:**
-- **Launch Date**: December 2024
-- **Project Type**: Open Source Financial Technology Platform
-- **License**: MIT License
-- **Status**: Active Development
 
 ---
 
