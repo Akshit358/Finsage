@@ -325,6 +325,14 @@ def get_cached_crypto_news():
     return crypto_cache['news']
 
 class FinSageHandler(BaseHTTPRequestHandler):
+    def do_OPTIONS(self):
+        """Handle OPTIONS requests for CORS"""
+        self.send_response(200)
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.end_headers()
+    
     def do_GET(self):
         """Handle GET requests"""
         parsed_path = urlparse(self.path)

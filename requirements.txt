@@ -1,0 +1,9 @@
+# FinSage Backend Dependencies
+# Core dependencies for simple_backend.py
+
+# HTTP server (built-in with Python 3)
+# No additional packages required for basic functionality
+
+# Optional: For enhanced features
+# requests>=2.28.0
+# urllib3>=1.26.0
