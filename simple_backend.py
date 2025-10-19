@@ -736,10 +736,16 @@ class FinSageHandler(BaseHTTPRequestHandler):
 
 def run_server():
     """Start the simple HTTP server"""
-    server_address = ('', 8000)
+    import os
+    
+    # Get port from environment variable (for AWS deployment)
+    port = int(os.environ.get('PORT', 8000))
+    host = os.environ.get('HOST', '0.0.0.0')
+    
+    server_address = (host, port)
     httpd = HTTPServer(server_address, FinSageHandler)
     print("🚀 FinSage Simple Backend Server starting...")
-    print("📡 Server running on http://localhost:8000")
+    print(f"📡 Server running on http://{host}:{port}")
     print("🔗 Available endpoints:")
     print("   GET  /api/v1/status/health")
     print("   GET  /api/v1/blockchain/status")
