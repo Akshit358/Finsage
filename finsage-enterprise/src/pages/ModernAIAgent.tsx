@@ -989,7 +989,7 @@ const ModernAIAgent: React.FC = () => {
           </div>
         )}
 
-        {/* Other tabs would be implemented similarly with modern glassmorphism design */}
+        {/* ML Predictions Tab */}
         {activeTab === 'predictions' && (
           <div style={{
             background: 'rgba(255, 255, 255, 0.1)',
@@ -998,14 +998,264 @@ const ModernAIAgent: React.FC = () => {
             padding: '2rem',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            textAlign: 'center',
             color: 'white'
           }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '1rem' }}>🔮 ML Predictions</h2>
-            <p style={{ fontSize: '1.125rem', opacity: 0.8 }}>Advanced machine learning predictions coming soon...</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '600', margin: 0 }}>🔮 ML Predictions</h2>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <select
+                  value={selectedSymbol}
+                  onChange={(e) => setSelectedSymbol(e.target.value)}
+                  style={{
+                    padding: '0.75rem 1rem',
+                    borderRadius: '1rem',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                  {symbols.map(symbol => (
+                    <option key={symbol} value={symbol} style={{ background: '#1f2937', color: 'white' }}>
+                      {symbol}
+                    </option>
+                  ))}
+                </select>
+                <Button 
+                  onClick={handleAnalyzeSymbol} 
+                  disabled={isAnalyzing}
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '1rem',
+                    background: isAnalyzing ? 'rgba(255, 255, 255, 0.1)' : 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
+                    border: 'none',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    cursor: isAnalyzing ? 'not-allowed' : 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: isAnalyzing ? 'none' : '0 4px 15px rgba(139, 92, 246, 0.3)'
+                  }}
+                >
+                  {isAnalyzing ? <LoadingSpinner size="sm" /> : 'Generate Prediction'}
+                </Button>
+              </div>
+            </div>
+
+            {predictions.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>🔮</div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>No Predictions Yet</h3>
+                <p style={{ fontSize: '1rem', opacity: 0.8, marginBottom: '2rem' }}>
+                  Generate AI-powered predictions for any symbol to get started
+                </p>
+                <Button 
+                  onClick={handleAnalyzeSymbol}
+                  style={{
+                    padding: '1rem 2rem',
+                    borderRadius: '1.5rem',
+                    background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
+                    border: 'none',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
+                  }}
+                >
+                  Generate First Prediction
+                </Button>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+                {predictions.map((prediction, index) => (
+                  <div key={`${prediction.symbol}-${index}`} style={{
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '1.5rem',
+                    padding: '2rem',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}>
+                    {/* Animated background gradient */}
+                    <div style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: '4px',
+                      background: `linear-gradient(90deg, ${getConfidenceColor(prediction.prediction.confidence)}, ${getConfidenceColor(prediction.prediction.confidence)}80)`,
+                      animation: 'pulse 2s ease-in-out infinite'
+                    }} />
+                    
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                      <h3 style={{ fontSize: '1.5rem', fontWeight: '600', margin: 0 }}>{prediction.symbol}</h3>
+                      <div style={{
+                        padding: '0.5rem 1rem',
+                        borderRadius: '1rem',
+                        background: `rgba(${getConfidenceColor(prediction.prediction.confidence).slice(1)}, 0.2)`,
+                        color: getConfidenceColor(prediction.prediction.confidence),
+                        fontSize: '0.875rem',
+                        fontWeight: '600'
+                      }}>
+                        {(prediction.prediction.confidence * 100).toFixed(0)}% Confidence
+                      </div>
+                    </div>
+
+                    {/* Price Prediction */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ fontSize: '0.875rem', opacity: 0.8, marginBottom: '0.5rem' }}>Predicted Price</div>
+                      <div style={{ fontSize: '2rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                        ${prediction.prediction.price.toFixed(2)}
+                      </div>
+                      <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>
+                        Timeframe: {prediction.prediction.timeframe}
+                      </div>
+                    </div>
+
+                    {/* Technical Analysis */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Technical Analysis</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Trend</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.technicalAnalysis.trend === 'bullish' ? '#10b981' : 
+                                   prediction.technicalAnalysis.trend === 'bearish' ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {prediction.technicalAnalysis.trend.toUpperCase()}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>RSI</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {prediction.technicalAnalysis.rsi.toFixed(1)}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Support</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            ${prediction.technicalAnalysis.support.toFixed(2)}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Resistance</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            ${prediction.technicalAnalysis.resistance.toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Sentiment Analysis */}
+                    <div style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Sentiment Analysis</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Overall</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.sentimentAnalysis.overall > 0.6 ? '#10b981' : 
+                                   prediction.sentimentAnalysis.overall < 0.4 ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {(prediction.sentimentAnalysis.overall * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>News</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.sentimentAnalysis.news > 0.6 ? '#10b981' : 
+                                   prediction.sentimentAnalysis.news < 0.4 ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {(prediction.sentimentAnalysis.news * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Social</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.sentimentAnalysis.social > 0.6 ? '#10b981' : 
+                                   prediction.sentimentAnalysis.social < 0.4 ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {(prediction.sentimentAnalysis.social * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Analyst</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.sentimentAnalysis.analyst > 0.6 ? '#10b981' : 
+                                   prediction.sentimentAnalysis.analyst < 0.4 ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {(prediction.sentimentAnalysis.analyst * 100).toFixed(0)}%
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Risk Assessment */}
+                    <div>
+                      <div style={{ fontSize: '1rem', fontWeight: '600', marginBottom: '1rem' }}>Risk Assessment</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Risk Level</div>
+                          <div style={{ 
+                            fontSize: '0.875rem', 
+                            fontWeight: '600',
+                            color: prediction.riskAssessment.level === 'low' ? '#10b981' : 
+                                   prediction.riskAssessment.level === 'high' ? '#ef4444' : '#f59e0b'
+                          }}>
+                            {prediction.riskAssessment.level.toUpperCase()}
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Volatility</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {(prediction.riskAssessment.volatility * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Max Drawdown</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {(prediction.riskAssessment.maxDrawdown * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Sharpe Ratio</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {prediction.riskAssessment.sharpeRatio.toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI Reasoning */}
+                    <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '1rem' }}>
+                      <div style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem', opacity: 0.9 }}>AI Reasoning:</div>
+                      <ul style={{ fontSize: '0.75rem', paddingLeft: '1rem', margin: 0, opacity: 0.8 }}>
+                        {prediction.prediction.reasoning.map((reason, reasonIndex) => (
+                          <li key={reasonIndex} style={{ marginBottom: '0.25rem' }}>{reason}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
+        {/* AI Insights Tab */}
         {activeTab === 'insights' && (
           <div style={{
             background: 'rgba(255, 255, 255, 0.1)',
@@ -1014,14 +1264,172 @@ const ModernAIAgent: React.FC = () => {
             padding: '2rem',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            textAlign: 'center',
             color: 'white'
           }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '1rem' }}>💡 AI Insights</h2>
-            <p style={{ fontSize: '1.125rem', opacity: 0.8 }}>Intelligent market insights coming soon...</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '600', margin: 0 }}>💡 AI Insights</h2>
+              <Button 
+                onClick={() => generateInitialInsights()}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '1rem',
+                  background: 'linear-gradient(45deg, #10b981, #059669)',
+                  border: 'none',
+                  color: 'white',
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+                }}
+              >
+                🔄 Refresh Insights
+              </Button>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
+              {insights.map((insight) => (
+                <div key={insight.id} style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '1.5rem',
+                  padding: '2rem',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease'
+                }}>
+                  {/* Type indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    fontSize: '2rem'
+                  }}>
+                    {getTypeIcon(insight.type)}
+                  </div>
+
+                  {/* Impact indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '4px',
+                    background: `linear-gradient(90deg, ${getImpactColor(insight.impact)}, ${getImpactColor(insight.impact)}80)`,
+                    animation: 'pulse 2s ease-in-out infinite'
+                  }} />
+
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                      <h3 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0, flex: 1, marginRight: '1rem' }}>
+                        {insight.title}
+                      </h3>
+                      <div style={{
+                        padding: '0.25rem 0.75rem',
+                        borderRadius: '1rem',
+                        background: `rgba(${getImpactColor(insight.impact).slice(1)}, 0.2)`,
+                        color: getImpactColor(insight.impact),
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        whiteSpace: 'nowrap'
+                      }}>
+                        {insight.impact.toUpperCase()} IMPACT
+                      </div>
+                    </div>
+                    
+                    <p style={{ fontSize: '0.875rem', opacity: 0.9, lineHeight: '1.6', marginBottom: '1rem' }}>
+                      {insight.description}
+                    </p>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Confidence:</div>
+                        <div style={{
+                          padding: '0.25rem 0.5rem',
+                          borderRadius: '0.5rem',
+                          background: `rgba(${getConfidenceColor(insight.confidence).slice(1)}, 0.2)`,
+                          color: getConfidenceColor(insight.confidence),
+                          fontSize: '0.75rem',
+                          fontWeight: '600'
+                        }}>
+                          {(insight.confidence * 100).toFixed(0)}%
+                        </div>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                        {insight.timeframe}
+                      </div>
+                    </div>
+
+                    {insight.symbols && insight.symbols.length > 0 && (
+                      <div style={{ marginBottom: '1rem' }}>
+                        <div style={{ fontSize: '0.75rem', opacity: 0.8, marginBottom: '0.5rem' }}>Related Symbols:</div>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {insight.symbols.map((symbol, index) => (
+                            <span key={index} style={{
+                              padding: '0.25rem 0.75rem',
+                              borderRadius: '1rem',
+                              background: 'rgba(255, 255, 255, 0.1)',
+                              fontSize: '0.75rem',
+                              fontWeight: '500'
+                            }}>
+                              {symbol}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {insight.action && (
+                      <div style={{
+                        padding: '1rem',
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        borderRadius: '1rem',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                      }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: '600', marginBottom: '0.5rem', opacity: 0.9 }}>
+                          Recommended Action:
+                        </div>
+                        <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>
+                          {insight.action}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {insights.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '3rem' }}>
+                <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>💡</div>
+                <h3 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '0.5rem' }}>No Insights Available</h3>
+                <p style={{ fontSize: '1rem', opacity: 0.8, marginBottom: '2rem' }}>
+                  AI insights will appear here as market conditions change
+                </p>
+                <Button 
+                  onClick={() => generateInitialInsights()}
+                  style={{
+                    padding: '1rem 2rem',
+                    borderRadius: '1.5rem',
+                    background: 'linear-gradient(45deg, #10b981, #059669)',
+                    border: 'none',
+                    color: 'white',
+                    fontSize: '1rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)'
+                  }}
+                >
+                  Generate Insights
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
+        {/* ML Models Tab */}
         {activeTab === 'models' && (
           <div style={{
             background: 'rgba(255, 255, 255, 0.1)',
@@ -1030,11 +1438,311 @@ const ModernAIAgent: React.FC = () => {
             padding: '2rem',
             boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
             border: '1px solid rgba(255, 255, 255, 0.2)',
-            textAlign: 'center',
             color: 'white'
           }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: '600', marginBottom: '1rem' }}>🧠 ML Models</h2>
-            <p style={{ fontSize: '1.125rem', opacity: 0.8 }}>Machine learning model management coming soon...</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '2rem', fontWeight: '600', margin: 0 }}>🧠 ML Models</h2>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <Button 
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '1rem',
+                    background: 'linear-gradient(45deg, #8b5cf6, #7c3aed)',
+                    border: 'none',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(139, 92, 246, 0.3)'
+                  }}
+                >
+                  🚀 Train New Model
+                </Button>
+                <Button 
+                  style={{
+                    padding: '0.75rem 1.5rem',
+                    borderRadius: '1rem',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    color: 'white',
+                    fontSize: '0.875rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  📊 Model Analytics
+                </Button>
+              </div>
+            </div>
+
+            {/* Model Status Overview */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '1.5rem',
+              marginBottom: '2rem'
+            }}>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                textAlign: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🤖</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>12</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Active Models</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                textAlign: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>📈</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>94.2%</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Avg Accuracy</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                textAlign: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⚡</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>2.3ms</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Avg Response</div>
+              </div>
+              <div style={{
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '1rem',
+                padding: '1.5rem',
+                textAlign: 'center',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>🔄</div>
+                <div style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.25rem' }}>3</div>
+                <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Training</div>
+              </div>
+            </div>
+
+            {/* Model List */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
+              {[
+                {
+                  name: 'LSTM Price Predictor v3.1',
+                  type: 'Neural Network',
+                  status: 'online',
+                  accuracy: 0.942,
+                  lastTrained: '2 hours ago',
+                  description: 'Advanced LSTM model for stock price prediction with 30-day forecasting',
+                  features: ['Price Prediction', 'Volatility Analysis', 'Trend Detection'],
+                  performance: { precision: 0.89, recall: 0.91, f1: 0.90 }
+                },
+                {
+                  name: 'Sentiment Analysis v2.5',
+                  type: 'Transformer',
+                  status: 'online',
+                  accuracy: 0.876,
+                  lastTrained: '1 day ago',
+                  description: 'BERT-based sentiment analysis for news and social media',
+                  features: ['News Sentiment', 'Social Media', 'Market Sentiment'],
+                  performance: { precision: 0.85, recall: 0.88, f1: 0.86 }
+                },
+                {
+                  name: 'Risk Assessment v1.8',
+                  type: 'Random Forest',
+                  status: 'training',
+                  accuracy: 0.923,
+                  lastTrained: 'Currently training',
+                  description: 'Multi-factor risk assessment and portfolio optimization',
+                  features: ['Risk Scoring', 'Portfolio Optimization', 'VaR Calculation'],
+                  performance: { precision: 0.91, recall: 0.89, f1: 0.90 }
+                },
+                {
+                  name: 'Technical Indicators v4.0',
+                  type: 'Ensemble',
+                  status: 'online',
+                  accuracy: 0.958,
+                  lastTrained: '3 hours ago',
+                  description: 'Advanced technical analysis with 50+ indicators',
+                  features: ['RSI', 'MACD', 'Bollinger Bands', 'Fibonacci'],
+                  performance: { precision: 0.94, recall: 0.96, f1: 0.95 }
+                },
+                {
+                  name: 'Market Regime v2.2',
+                  type: 'Clustering',
+                  status: 'online',
+                  accuracy: 0.901,
+                  lastTrained: '6 hours ago',
+                  description: 'Market regime detection and classification',
+                  features: ['Bull/Bear Detection', 'Volatility Regimes', 'Market Cycles'],
+                  performance: { precision: 0.88, recall: 0.92, f1: 0.90 }
+                },
+                {
+                  name: 'News Impact v1.5',
+                  type: 'NLP Pipeline',
+                  status: 'offline',
+                  accuracy: 0.834,
+                  lastTrained: '1 week ago',
+                  description: 'News impact analysis and event detection',
+                  features: ['Event Detection', 'Impact Scoring', 'News Classification'],
+                  performance: { precision: 0.81, recall: 0.86, f1: 0.83 }
+                }
+              ].map((model, index) => (
+                <div key={index} style={{
+                  background: 'rgba(255, 255, 255, 0.05)',
+                  borderRadius: '1.5rem',
+                  padding: '2rem',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
+                  backdropFilter: 'blur(10px)',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}>
+                  {/* Status indicator */}
+                  <div style={{
+                    position: 'absolute',
+                    top: '1rem',
+                    right: '1rem',
+                    padding: '0.5rem 1rem',
+                    borderRadius: '1rem',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    background: model.status === 'online' ? 'rgba(16, 185, 129, 0.2)' : 
+                               model.status === 'training' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(239, 68, 68, 0.2)',
+                    color: model.status === 'online' ? '#10b981' : 
+                           model.status === 'training' ? '#f59e0b' : '#ef4444'
+                  }}>
+                    {model.status.toUpperCase()}
+                  </div>
+
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: '600', margin: '0 0 0.5rem 0' }}>
+                      {model.name}
+                    </h3>
+                    <div style={{ fontSize: '0.875rem', opacity: 0.8, marginBottom: '1rem' }}>
+                      {model.type} • {model.lastTrained}
+                    </div>
+                    <p style={{ fontSize: '0.875rem', opacity: 0.9, lineHeight: '1.6', marginBottom: '1rem' }}>
+                      {model.description}
+                    </p>
+
+                    {/* Accuracy */}
+                    <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <span style={{ fontSize: '0.875rem', opacity: 0.8 }}>Accuracy</span>
+                        <span style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                          {(model.accuracy * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                      <div style={{
+                        width: '100%',
+                        height: '8px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        borderRadius: '4px',
+                        overflow: 'hidden'
+                      }}>
+                        <div style={{
+                          width: `${model.accuracy * 100}%`,
+                          height: '100%',
+                          background: `linear-gradient(90deg, ${getConfidenceColor(model.accuracy)}, ${getConfidenceColor(model.accuracy)}80)`,
+                          borderRadius: '4px',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+                    </div>
+
+                    {/* Features */}
+                    <div style={{ marginBottom: '1rem' }}>
+                      <div style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.5rem' }}>Features:</div>
+                      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                        {model.features.map((feature, featureIndex) => (
+                          <span key={featureIndex} style={{
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '1rem',
+                            background: 'rgba(255, 255, 255, 0.1)',
+                            fontSize: '0.75rem',
+                            fontWeight: '500'
+                          }}>
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Performance Metrics */}
+                    <div style={{
+                      padding: '1rem',
+                      background: 'rgba(255, 255, 255, 0.05)',
+                      borderRadius: '1rem',
+                      border: '1px solid rgba(255, 255, 255, 0.1)'
+                    }}>
+                      <div style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: '0.75rem' }}>Performance Metrics:</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem' }}>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Precision</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {(model.performance.precision * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>Recall</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {(model.performance.recall * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: '0.75rem', opacity: 0.8 }}>F1 Score</div>
+                          <div style={{ fontSize: '0.875rem', fontWeight: '600' }}>
+                            {(model.performance.f1 * 100).toFixed(1)}%
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <Button 
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem 1rem',
+                        borderRadius: '1rem',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      📊 View Details
+                    </Button>
+                    <Button 
+                      style={{
+                        flex: 1,
+                        padding: '0.75rem 1rem',
+                        borderRadius: '1rem',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(255, 255, 255, 0.3)',
+                        color: 'white',
+                        fontSize: '0.75rem',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      🔄 Retrain
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
