@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import './App.css';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://54.227.68.44:8000';
 
 // Component definitions
 const Education = ({ educationTopics, glossary }) => (
@@ -471,7 +471,9 @@ function App() {
   const fetchPortfolio = useCallback(async () => {
     try {
       setLoading(true);
+      console.log('Fetching portfolio data...');
       const response = await axios.get(`${API_BASE_URL}/api/v1/portfolio/user123`);
+      console.log('Portfolio response:', response.data);
       setPortfolio(response.data);
       addNotification('Portfolio data refreshed successfully!', 'success');
     } catch (error) {
@@ -498,12 +500,25 @@ function App() {
   const getPrediction = async () => {
     setLoading(true);
     try {
+      console.log('Sending prediction request with data:', predictionData);
+      console.log('API URL:', `${API_BASE_URL}/api/v1/prediction/predict`);
+      
       const response = await axios.post(`${API_BASE_URL}/api/v1/prediction/predict`, predictionData);
-      setPredictionResult(response.data);
-      addNotification('AI prediction generated successfully!', 'success');
+      console.log('Prediction response status:', response.status);
+      console.log('Prediction response data:', response.data);
+      
+      if (response.data && response.data.prediction) {
+        setPredictionResult(response.data);
+        addNotification('AI prediction generated successfully!', 'success');
+      } else {
+        console.error('Invalid prediction response:', response.data);
+        addNotification('Invalid prediction response from server', 'error');
+      }
     } catch (error) {
       console.error('Error getting prediction:', error);
-      addNotification('Failed to generate AI prediction', 'error');
+      console.error('Error response:', error.response);
+      console.error('Error details:', error.response?.data);
+      addNotification(`Failed to generate AI prediction: ${error.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -609,17 +624,35 @@ function App() {
   }, []);
 
   useEffect(() => {
-    fetchPortfolio();
-    fetchBlockchainStatus();
-    fetchCryptoData();
-    fetchCryptoNews();
-    fetchEthereumData();
-    fetchEducationTopics();
-    fetchGlossary();
-    fetchGoals();
-    fetchAnalytics();
-    fetchAlerts();
-  }, [fetchPortfolio, fetchBlockchainStatus, fetchCryptoData, fetchCryptoNews, fetchEthereumData, fetchEducationTopics, fetchGlossary, fetchGoals, fetchAnalytics, fetchAlerts]);
+    console.log('App mounted, fetching initial data...');
+    console.log('API_BASE_URL:', API_BASE_URL);
+    
+    // Test API connection first
+    fetch(`${API_BASE_URL}/api/v1/portfolio/user123`)
+      .then(response => {
+        console.log('API test response status:', response.status);
+        if (response.ok) {
+          console.log('API connection successful, fetching data...');
+          fetchPortfolio();
+          fetchBlockchainStatus();
+          fetchCryptoData();
+          fetchCryptoNews();
+          fetchEthereumData();
+          fetchEducationTopics();
+          fetchGlossary();
+          fetchGoals();
+          fetchAnalytics();
+          fetchAlerts();
+        } else {
+          console.error('API test failed with status:', response.status);
+          addNotification('Failed to connect to backend API', 'error');
+        }
+      })
+      .catch(error => {
+        console.error('API test failed:', error);
+        addNotification('Failed to connect to backend API', 'error');
+      });
+  }, []); // Remove dependencies to avoid infinite loops
 
   const TabButton = ({ id, label, icon: Icon }) => (
     <motion.button
@@ -801,7 +834,7 @@ function App() {
       >
         <StatCard
           title="Portfolio Value"
-          value={portfolio?.total_value ? <AnimatedCounter value={portfolio.total_value} prefix="$" /> : 'Loading...'}
+          value={portfolio?.totalValue ? <AnimatedCounter value={portfolio.totalValue} prefix="$" /> : 'Loading...'}
           subtitle="Total Investment"
           icon={DollarSign}
           color="green"
@@ -855,13 +888,13 @@ function App() {
       </div>
             <div className="progress-container">
               <ProgressRing 
-                percentage={portfolio?.total_return || 0} 
+                percentage={portfolio?.totalGainPercent || 0} 
                 size={100} 
                 color="url(#success-gradient)"
               />
               <div className="progress-info">
                 <span className="progress-label">Total Return</span>
-                <span className="progress-value">{portfolio?.total_return || 0}%</span>
+                <span className="progress-value">{portfolio?.totalGainPercent || 0}%</span>
               </div>
             </div>
           </motion.div>
@@ -1269,7 +1302,12 @@ function App() {
         <p>Track and manage your investment portfolio</p>
       </div>
 
-      {portfolio ? (
+      {loading ? (
+        <div className="loading-state">
+          <div className="spinner"></div>
+          <p>Loading portfolio data...</p>
+        </div>
+      ) : portfolio ? (
         <div className="portfolio-content">
           <div className="portfolio-summary">
             <div className="summary-card">
@@ -1277,15 +1315,15 @@ function App() {
               <div className="summary-stats">
                 <div className="summary-item">
                   <span className="label">Total Value</span>
-                  <span className="value">${portfolio.total_value?.toLocaleString() || 'N/A'}</span>
+                  <span className="value">${portfolio.totalValue?.toLocaleString() || 'N/A'}</span>
                 </div>
                 <div className="summary-item">
                   <span className="label">Total Return</span>
-                  <span className="value">{portfolio.total_return || 'N/A'}%</span>
+                  <span className="value">{portfolio.totalGainPercent || 'N/A'}%</span>
                 </div>
                 <div className="summary-item">
                   <span className="label">Number of Assets</span>
-                  <span className="value">{portfolio.assets?.length || 0}</span>
+                  <span className="value">{portfolio.positions?.length || 0}</span>
                 </div>
               </div>
             </div>
@@ -1293,16 +1331,20 @@ function App() {
 
           <div className="assets-list">
             <h3>Your Assets</h3>
-            {portfolio.assets?.map((asset, index) => (
+            {portfolio.positions?.map((asset, index) => (
               <div key={index} className="asset-card">
                 <div className="asset-info">
-                  <div className="asset-name">{asset.name}</div>
+                  <div className="asset-name">{asset.symbol}</div>
                   <div className="asset-symbol">{asset.symbol}</div>
                 </div>
                 <div className="asset-metrics">
                   <div className="metric">
-                    <span className="metric-label">Value</span>
-                    <span className="metric-value">${asset.value?.toLocaleString()}</span>
+                    <span className="metric-label">Shares</span>
+                    <span className="metric-value">{asset.shares}</span>
+                  </div>
+                  <div className="metric">
+                    <span className="metric-label">Current Price</span>
+                    <span className="metric-value">${asset.currentPrice?.toLocaleString()}</span>
                   </div>
                   <div className="metric">
                     <span className="metric-label">Return</span>
@@ -1318,9 +1360,12 @@ function App() {
           </div>
         </div>
       ) : (
-        <div className="loading-state">
-          <div className="spinner"></div>
-          <p>Loading portfolio...</p>
+        <div className="error-state">
+          <div className="error-icon">⚠️</div>
+          <p>Failed to load portfolio data</p>
+          <button onClick={fetchPortfolio} className="retry-btn">
+            Try Again
+          </button>
         </div>
       )}
     </div>

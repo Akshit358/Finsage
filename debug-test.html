@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FinSage Debug Test</title>
+</head>
+<body>
+    <h1>FinSage API Debug Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE_URL = 'http://54.227.68.44:8000';
+        
+        async function testAPI() {
+            const results = document.getElementById('results');
+            results.innerHTML = '<p>Testing API calls...</p>';
+            
+            try {
+                // Test portfolio API
+                console.log('Testing portfolio API...');
+                const portfolioResponse = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`);
+                const portfolioData = await portfolioResponse.json();
+                console.log('Portfolio response:', portfolioData);
+                
+                results.innerHTML += `
+                    <h3>Portfolio API Test:</h3>
+                    <p>Status: ${portfolioResponse.status}</p>
+                    <p>Total Value: $${portfolioData.totalValue}</p>
+                    <p>Positions: ${portfolioData.positions?.length || 0}</p>
+                `;
+                
+                // Test prediction API
+                console.log('Testing prediction API...');
+                const predictionResponse = await fetch(`${API_BASE_URL}/api/v1/prediction/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        age: 30,
+                        annual_income: 50000,
+                        risk_tolerance: 'medium',
+                        financial_goals: 'retirement',
+                        investment_horizon_years: 10,
+                        dependents: 0,
+                        debt_amount: 0,
+                        monthly_expenses: 3000
+                    })
+                });
+                const predictionData = await predictionResponse.json();
+                console.log('Prediction response:', predictionData);
+                
+                results.innerHTML += `
+                    <h3>Prediction API Test:</h3>
+                    <p>Status: ${predictionResponse.status}</p>
+                    <p>Recommendations: ${predictionData.prediction?.recommendations?.length || 0}</p>
+                    <p>Confidence: ${predictionData.prediction?.confidence || 'N/A'}</p>
+                `;
+                
+                results.innerHTML += '<p style="color: green;">✅ All API tests passed!</p>';
+                
+            } catch (error) {
+                console.error('API test failed:', error);
+                results.innerHTML += `<p style="color: red;">❌ API test failed: ${error.message}</p>`;
+            }
+        }
+        
+        // Run test when page loads
+        testAPI();
+    </script>
+</body>
+</html>

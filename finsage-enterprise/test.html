@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSage Test</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        h1 {
+            color: #2563eb;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .status {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+        .success {
+            background: #f0fdf4;
+            color: #059669;
+            border: 1px solid #bbf7d0;
+        }
+        .test-button {
+            background: #2563eb;
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 1rem;
+        }
+        .test-button:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎉 FinSage Enterprise Test</h1>
+        
+        <div class="status success">
+            <h2>✅ HTML Page Loading</h2>
+            <p>This page is loading correctly</p>
+        </div>
+        
+        <div class="status">
+            <h2>🔍 Testing React App</h2>
+            <p>Click the button below to test if the React app is working:</p>
+            <button class="test-button" onclick="testReactApp()">Test React App</button>
+            <div id="test-result"></div>
+        </div>
+        
+        <div class="status">
+            <h2>📋 Debug Information</h2>
+            <p><strong>Current URL:</strong> <span id="current-url"></span></p>
+            <p><strong>User Agent:</strong> <span id="user-agent"></span></p>
+            <p><strong>JavaScript Enabled:</strong> <span id="js-status"></span></p>
+        </div>
+    </div>
+    
+    <script>
+        // Set debug information
+        document.getElementById('current-url').textContent = window.location.href;
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('js-status').textContent = 'Yes';
+        
+        async function testReactApp() {
+            const result = document.getElementById('test-result');
+            result.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                // Test if we can fetch the React app
+                const response = await fetch('http://localhost:5173');
+                const html = await response.text();
+                
+                if (html.includes('root')) {
+                    result.innerHTML = '<div class="status success"><h3>✅ React App HTML Found</h3><p>HTML structure is correct</p></div>';
+                    
+                    // Test if we can fetch the main.tsx
+                    try {
+                        const jsResponse = await fetch('http://localhost:5173/src/main.tsx');
+                        const js = await jsResponse.text();
+                        
+                        if (js.includes('createRoot')) {
+                            result.innerHTML += '<div class="status success"><h3>✅ React JavaScript Found</h3><p>JavaScript is compiling correctly</p></div>';
+                        } else {
+                            result.innerHTML += '<div class="status error"><h3>❌ React JavaScript Issue</h3><p>JavaScript compilation failed</p></div>';
+                        }
+                    } catch (jsError) {
+                        result.innerHTML += '<div class="status error"><h3>❌ JavaScript Fetch Error</h3><p>' + jsError.message + '</p></div>';
+                    }
+                } else {
+                    result.innerHTML = '<div class="status error"><h3>❌ React App HTML Issue</h3><p>HTML structure is incorrect</p></div>';
+                }
+            } catch (error) {
+                result.innerHTML = '<div class="status error"><h3>❌ Network Error</h3><p>' + error.message + '</p></div>';
+            }
+        }
+        
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testReactApp, 1000);
+        });
+    </script>
+</body>
+</html>

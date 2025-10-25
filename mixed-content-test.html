@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mixed Content Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>Mixed Content Test</h1>
+    <p>This tests if HTTPS frontend can connect to HTTP backend</p>
+    
+    <div class="test">
+        <h3>Test 1: Direct HTTP API Call</h3>
+        <button onclick="testDirectHTTP()">Test HTTP API</button>
+        <div id="http-result"></div>
+    </div>
+    
+    <div class="test">
+        <h3>Test 2: Fetch with CORS</h3>
+        <button onclick="testFetchCORS()">Test Fetch CORS</button>
+        <div id="fetch-result"></div>
+    </div>
+    
+    <div class="test">
+        <h3>Test 3: XMLHttpRequest</h3>
+        <button onclick="testXHR()">Test XHR</button>
+        <div id="xhr-result"></div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://54.227.68.44:8000';
+        
+        async function testDirectHTTP() {
+            const result = document.getElementById('http-result');
+            result.innerHTML = '<p>Testing direct HTTP call...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`);
+                const data = await response.json();
+                result.innerHTML = `<p class="success">✅ HTTP call successful: $${data.totalValue}</p>`;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ HTTP call failed: ${error.message}</p>`;
+                if (error.message.includes('Mixed Content')) {
+                    result.innerHTML += `<p class="warning">⚠️ This is a mixed content error - HTTPS page trying to access HTTP API</p>`;
+                }
+            }
+        }
+        
+        async function testFetchCORS() {
+            const result = document.getElementById('fetch-result');
+            result.innerHTML = '<p>Testing fetch with CORS...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                result.innerHTML = `<p class="success">✅ CORS fetch successful: $${data.totalValue}</p>`;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ CORS fetch failed: ${error.message}</p>`;
+            }
+        }
+        
+        function testXHR() {
+            const result = document.getElementById('xhr-result');
+            result.innerHTML = '<p>Testing XMLHttpRequest...</p>';
+            
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `${API_BASE_URL}/api/v1/portfolio/user123`);
+            xhr.setRequestHeader('Accept', 'application/json');
+            
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const data = JSON.parse(xhr.responseText);
+                    result.innerHTML = `<p class="success">✅ XHR successful: $${data.totalValue}</p>`;
+                } else {
+                    result.innerHTML = `<p class="error">❌ XHR failed with status: ${xhr.status}</p>`;
+                }
+            };
+            
+            xhr.onerror = function() {
+                result.innerHTML = `<p class="error">❌ XHR network error</p>`;
+            };
+            
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

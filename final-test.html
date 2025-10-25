@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FinSage Final Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+        .loading { color: blue; }
+        .info { color: #666; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin: 10px 0; padding: 10px; background: #f8f9fa; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 FinSage Comprehensive Test</h1>
+    <p class="info">This page tests all aspects of the FinSage application to identify any issues.</p>
+    
+    <div class="test-section">
+        <h3>🌐 Backend API Tests</h3>
+        <button onclick="testBackendAPIs()">Test All Backend APIs</button>
+        <div id="backend-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎯 Frontend Integration Tests</h3>
+        <button onclick="testFrontendIntegration()">Test Frontend Integration</button>
+        <div id="frontend-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📊 Main Application Test</h3>
+        <button onclick="testMainApplication()">Test Main Application</button>
+        <div id="main-app-results"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🔧 Debug Information</h3>
+        <button onclick="showDebugInfo()">Show Debug Info</button>
+        <div id="debug-results"></div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://54.227.68.44:8000';
+        const FRONTEND_URL = 'https://dju1t116k25r5.cloudfront.net';
+        
+        async function testBackendAPIs() {
+            const results = document.getElementById('backend-results');
+            results.innerHTML = '<p class="loading">Testing backend APIs...</p>';
+            
+            const tests = [
+                { name: 'Portfolio API', url: `${API_BASE_URL}/api/v1/portfolio/user123`, method: 'GET' },
+                { name: 'Prediction API', url: `${API_BASE_URL}/api/v1/prediction/predict`, method: 'POST', body: {
+                    age: 30, annual_income: 50000, risk_tolerance: 'medium', 
+                    financial_goals: 'retirement', investment_horizon_years: 10, 
+                    dependents: 0, debt_amount: 0, monthly_expenses: 3000
+                }},
+                { name: 'Blockchain Status', url: `${API_BASE_URL}/api/v1/blockchain/status`, method: 'GET' },
+                { name: 'Crypto Prices', url: `${API_BASE_URL}/api/v1/crypto/prices`, method: 'GET' },
+                { name: 'Health Check', url: `${API_BASE_URL}/`, method: 'GET' }
+            ];
+            
+            let allPassed = true;
+            let resultsHTML = '';
+            
+            for (const test of tests) {
+                try {
+                    const options = {
+                        method: test.method,
+                        headers: { 'Content-Type': 'application/json' }
+                    };
+                    if (test.body) options.body = JSON.stringify(test.body);
+                    
+                    const response = await fetch(test.url, options);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        resultsHTML += `<div class="result success">✅ ${test.name}: OK (${response.status})</div>`;
+                    } else {
+                        resultsHTML += `<div class="result error">❌ ${test.name}: Failed (${response.status})</div>`;
+                        allPassed = false;
+                    }
+                } catch (error) {
+                    resultsHTML += `<div class="result error">❌ ${test.name}: Error - ${error.message}</div>`;
+                    allPassed = false;
+                }
+            }
+            
+            results.innerHTML = resultsHTML + (allPassed ? 
+                '<div class="result success">🎉 All backend APIs are working!</div>' : 
+                '<div class="result error">⚠️ Some backend APIs have issues</div>');
+        }
+        
+        async function testFrontendIntegration() {
+            const results = document.getElementById('frontend-results');
+            results.innerHTML = '<p class="loading">Testing frontend integration...</p>';
+            
+            try {
+                // Test if frontend can make API calls
+                const response = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`);
+                const data = await response.json();
+                
+                if (response.ok && data.totalValue) {
+                    results.innerHTML = `
+                        <div class="result success">✅ Frontend can connect to backend</div>
+                        <div class="result info">Portfolio Value: $${data.totalValue}</div>
+                        <div class="result info">Positions: ${data.positions?.length || 0}</div>
+                        <div class="result success">🎉 Frontend integration working!</div>
+                    `;
+                } else {
+                    results.innerHTML = `<div class="result error">❌ Frontend integration failed</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="result error">❌ Frontend integration error: ${error.message}</div>`;
+            }
+        }
+        
+        async function testMainApplication() {
+            const results = document.getElementById('main-app-results');
+            results.innerHTML = '<p class="loading">Testing main application...</p>';
+            
+            try {
+                const response = await fetch(FRONTEND_URL);
+                const html = await response.text();
+                
+                if (html.includes('React App') && html.includes('main.d4d4a194.js')) {
+                    results.innerHTML = `
+                        <div class="result success">✅ Main app loads successfully</div>
+                        <div class="result info">React App detected: ${html.includes('React App')}</div>
+                        <div class="result info">Latest JS bundle: ${html.includes('main.d4d4a194.js')}</div>
+                        <div class="result success">🎉 Main application is working!</div>
+                    `;
+                } else {
+                    results.innerHTML = `<div class="result error">❌ Main application not loading properly</div>`;
+                }
+            } catch (error) {
+                results.innerHTML = `<div class="result error">❌ Main application error: ${error.message}</div>`;
+            }
+        }
+        
+        function showDebugInfo() {
+            const results = document.getElementById('debug-results');
+            results.innerHTML = `
+                <div class="result info"><strong>API Base URL:</strong> ${API_BASE_URL}</div>
+                <div class="result info"><strong>Frontend URL:</strong> ${FRONTEND_URL}</div>
+                <div class="result info"><strong>User Agent:</strong> ${navigator.userAgent}</div>
+                <div class="result info"><strong>Current Time:</strong> ${new Date().toISOString()}</div>
+                <div class="result info"><strong>Console:</strong> Open browser console (F12) to see detailed logs</div>
+            `;
+        }
+        
+        // Auto-run tests on page load
+        window.onload = function() {
+            testBackendAPIs();
+            testFrontendIntegration();
+            testMainApplication();
+            showDebugInfo();
+        };
+    </script>
+</body>
+</html>
