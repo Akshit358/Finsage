@@ -16,17 +16,17 @@ import {
 } from '../services/api';
 import { 
   Portfolio, 
-  MarketIndicators, 
+  // MarketIndicators, 
   PredictionRequest, 
   PredictionResponse,
   SentimentRequest,
-  SentimentResponse,
+  // SentimentResponse,
   OptimizationRequest,
-  OptimizationResponse,
+  // OptimizationResponse,
   RoboAdvisorRequest,
-  RoboAdvisorResponse,
-  BlockchainStatus,
-  PerformanceMetrics,
+  // RoboAdvisorResponse,
+  // BlockchainStatus,
+  // PerformanceMetrics,
   User
 } from '../types';
 

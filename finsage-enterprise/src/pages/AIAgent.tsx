@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { LoadingSpinner } from '../components/ui/Skeleton';
-import { generativeAIService, AIResponse, MarketContext, UserProfile } from '../services/generativeAI';
+import { generativeAIService, MarketContext, UserProfile } from '../services/generativeAI';
 import { openaiService, GPTMessage } from '../services/openaiService';
 
 interface AIMessage {
@@ -297,51 +296,51 @@ const AIAgent: React.FC = () => {
     }
   };
 
-  const generateAIResponse = (userInput: string): AIMessage => {
-    const responses = [
-      {
-        pattern: /analyze|analysis|performance/i,
-        response: "Based on my analysis, I'm seeing strong technical indicators with RSI at 65 and MACD showing bullish divergence. The stock appears to be in an uptrend with good volume support.",
-        confidence: 0.88,
-        suggestions: ["Show detailed technical analysis", "Compare with sector performance", "Check risk metrics"]
-      },
-      {
-        pattern: /predict|forecast|future/i,
-        response: "My ML models suggest a 15% upside potential over the next 30 days with 78% confidence. Key factors include positive earnings momentum and favorable market conditions.",
-        confidence: 0.78,
-        suggestions: ["View detailed prediction", "Check model accuracy", "See alternative scenarios"]
-      },
-      {
-        pattern: /portfolio|optimize|allocation/i,
-        response: "I recommend rebalancing your portfolio with 40% growth stocks, 30% value stocks, 20% bonds, and 10% alternatives. This allocation provides optimal risk-adjusted returns.",
-        confidence: 0.82,
-        suggestions: ["Implement rebalancing", "View portfolio analysis", "Check tax implications"]
-      },
-      {
-        pattern: /risk|volatility|safe/i,
-        response: "Current portfolio risk is moderate with a Sharpe ratio of 1.2. I suggest adding some defensive positions to reduce volatility while maintaining growth potential.",
-        confidence: 0.75,
-        suggestions: ["View risk analysis", "Add defensive stocks", "Check correlation matrix"]
-      },
-      {
-        pattern: /market|trend|sector/i,
-        response: "The market is showing mixed signals with tech sector leading gains while energy sector facing headwinds. Overall sentiment is cautiously optimistic.",
-        confidence: 0.70,
-        suggestions: ["View sector analysis", "Check market indicators", "See trend predictions"]
-      }
-    ];
+  // const generateAIResponse = (userInput: string): AIMessage => {
+  //   const responses = [
+  //     {
+  //       pattern: /analyze|analysis|performance/i,
+  //       response: "Based on my analysis, I'm seeing strong technical indicators with RSI at 65 and MACD showing bullish divergence. The stock appears to be in an uptrend with good volume support.",
+  //       confidence: 0.88,
+  //       suggestions: ["Show detailed technical analysis", "Compare with sector performance", "Check risk metrics"]
+  //     },
+  //     {
+  //       pattern: /predict|forecast|future/i,
+  //       response: "My ML models suggest a 15% upside potential over the next 30 days with 78% confidence. Key factors include positive earnings momentum and favorable market conditions.",
+  //       confidence: 0.78,
+  //       suggestions: ["View detailed prediction", "Check model accuracy", "See alternative scenarios"]
+  //     },
+  //     {
+  //       pattern: /portfolio|optimize|allocation/i,
+  //       response: "I recommend rebalancing your portfolio with 40% growth stocks, 30% value stocks, 20% bonds, and 10% alternatives. This allocation provides optimal risk-adjusted returns.",
+  //       confidence: 0.82,
+  //       suggestions: ["Implement rebalancing", "View portfolio analysis", "Check tax implications"]
+  //     },
+  //     {
+  //       pattern: /risk|volatility|safe/i,
+  //       response: "Current portfolio risk is moderate with a Sharpe ratio of 1.2. I suggest adding some defensive positions to reduce volatility while maintaining growth potential.",
+  //       confidence: 0.75,
+  //       suggestions: ["View risk analysis", "Add defensive stocks", "Check correlation matrix"]
+  //     },
+  //     {
+  //       pattern: /market|trend|sector/i,
+  //       response: "The market is showing mixed signals with tech sector leading gains while energy sector facing headwinds. Overall sentiment is cautiously optimistic.",
+  //       confidence: 0.70,
+  //       suggestions: ["View sector analysis", "Check market indicators", "See trend predictions"]
+  //     }
+  //   ];
 
-    const matchedResponse = responses.find(r => r.pattern.test(userInput)) || responses[0];
+  //   const matchedResponse = responses.find(r => r.pattern.test(userInput)) || responses[0];
     
-    return {
-      id: Date.now().toString(),
-      type: 'ai',
-      content: matchedResponse.response,
-      timestamp: new Date(),
-      confidence: matchedResponse.confidence,
-      suggestions: matchedResponse.suggestions
-    };
-  };
+  //   return {
+  //     id: Date.now().toString(),
+  //     type: 'ai',
+  //     content: matchedResponse.response,
+  //     timestamp: new Date(),
+  //     confidence: matchedResponse.confidence,
+  //     suggestions: matchedResponse.suggestions
+  //   };
+  // };
 
   const handleAnalyzeSymbol = async () => {
     setIsAnalyzing(true);

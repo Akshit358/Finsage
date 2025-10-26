@@ -10,7 +10,7 @@ import {
   Link as LinkIcon, 
   Settings, 
   Home,
-  Menu,
+  // Menu,
   X
 } from 'lucide-react';
 import { cn } from '../../lib/utils';

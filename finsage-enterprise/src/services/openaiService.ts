@@ -37,7 +37,7 @@ class OpenAIService {
   };
 
   constructor() {
-    this.apiKey = import.meta.env.VITE_OPENAI_API_KEY || '';
+    this.apiKey = (import.meta as any).env?.VITE_OPENAI_API_KEY || '';
   }
 
   async generateResponse(

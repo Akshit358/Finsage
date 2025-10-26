@@ -1,4 +1,4 @@
-import React from 'react';
+// import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -17,6 +17,19 @@ import AIAgent from './pages/AIAgent';
 import ModernAIAgent from './pages/ModernAIAgent';
 import MLAnalytics from './pages/MLAnalytics';
 import AIDemo from './pages/AIDemo';
+import RealtimeDashboard from './pages/RealtimeDashboard';
+import AdvancedPortfolioOptimizer from './pages/AdvancedPortfolioOptimizer';
+import PaperTradingSimulator from './pages/PaperTradingSimulator';
+import NewsSentimentAnalysis from './pages/NewsSentimentAnalysis';
+import RiskManagement from './pages/RiskManagement';
+import BacktestingEngine from './pages/BacktestingEngine';
+import OptionsTrading from './pages/OptionsTrading';
+import Authentication from './pages/Authentication';
+import DatabaseManager from './pages/DatabaseManager';
+import APIIntegration from './pages/APIIntegration';
+import ProductionMonitor from './pages/ProductionMonitor';
+import SecurityDashboard from './pages/SecurityDashboard';
+import Documentation from './pages/Documentation';
 import './index.css';
 
 // Simple test component to debug
@@ -59,14 +72,14 @@ const TestPage = () => (
           marginBottom: '1rem',
           color: '#111827'
         }}>
-          ✅ Application Status
+          🚀 FinSage Enterprise - Complete Platform
         </h2>
         <p style={{
           fontSize: '1.125rem',
           color: '#059669',
           marginBottom: '1rem'
         }}>
-          React + TypeScript + Vite is working perfectly!
+          All 17 Features Ready - Production Grade Financial Platform!
         </p>
         <div style={{
           display: 'flex',
@@ -153,17 +166,127 @@ const TestPage = () => (
           }}>
             🧠 ML Analytics
           </a>
-          <a href="/ai-demo" style={{
-            backgroundColor: '#dc2626',
-            color: 'white',
-            padding: '0.75rem 1.5rem',
-            borderRadius: '0.5rem',
-            textDecoration: 'none',
-            fontSize: '1rem',
-            fontWeight: '500'
-          }}>
-            🤖 AI Demo
-          </a>
+              <a href="/ai-demo" style={{
+                backgroundColor: '#dc2626',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🤖 AI Demo
+              </a>
+              <a href="/realtime-dashboard" style={{
+                backgroundColor: '#059669',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                📊 Live Dashboard
+              </a>
+              <a href="/portfolio-optimizer" style={{
+                backgroundColor: '#7c3aed',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🎯 Portfolio Optimizer
+              </a>
+              <a href="/paper-trading" style={{
+                backgroundColor: '#0891b2',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                📈 Paper Trading
+              </a>
+              <a href="/news-sentiment" style={{
+                backgroundColor: '#be185d',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                📰 News Sentiment
+              </a>
+              <a href="/risk-management" style={{
+                backgroundColor: '#dc2626',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                ⚠️ Risk Management
+              </a>
+              <a href="/backtesting" style={{
+                backgroundColor: '#7c2d12',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🔬 Backtesting
+              </a>
+              <a href="/options-trading" style={{
+                backgroundColor: '#059669',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                📊 Options Trading
+              </a>
+              <a href="/auth" style={{
+                backgroundColor: '#dc2626',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🔐 Authentication
+              </a>
+              <a href="/database" style={{
+                backgroundColor: '#7c2d12',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🗄️ Database Manager
+              </a>
+              <a href="/api-integration" style={{
+                backgroundColor: '#0891b2',
+                color: 'white',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '0.5rem',
+                textDecoration: 'none',
+                fontSize: '1rem',
+                fontWeight: '500'
+              }}>
+                🔌 API Integration
+              </a>
         </div>
       </div>
     </div>
@@ -200,6 +323,19 @@ function App() {
                 <Route path="/modern-ai-agent" element={<ModernAIAgent />} />
             <Route path="/ml-analytics" element={<Layout><MLAnalytics /></Layout>} />
             <Route path="/ai-demo" element={<Layout><AIDemo /></Layout>} />
+            <Route path="/realtime-dashboard" element={<RealtimeDashboard />} />
+            <Route path="/portfolio-optimizer" element={<AdvancedPortfolioOptimizer />} />
+            <Route path="/paper-trading" element={<PaperTradingSimulator />} />
+            <Route path="/news-sentiment" element={<NewsSentimentAnalysis />} />
+            <Route path="/risk-management" element={<RiskManagement />} />
+            <Route path="/backtesting" element={<BacktestingEngine />} />
+            <Route path="/options-trading" element={<OptionsTrading />} />
+            <Route path="/auth" element={<Authentication />} />
+            <Route path="/database" element={<DatabaseManager />} />
+            <Route path="/api-integration" element={<APIIntegration />} />
+            <Route path="/production-monitor" element={<ProductionMonitor />} />
+            <Route path="/security" element={<SecurityDashboard />} />
+            <Route path="/docs" element={<Documentation />} />
           </Routes>
       </div>
       </Router>

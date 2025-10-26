@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
+import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { LoadingSpinner } from './ui/Skeleton';
@@ -57,7 +57,7 @@ interface OptimizationConstraints {
 const AIPortfolioOptimizer: React.FC = () => {
   const [assets, setAssets] = useState<Asset[]>([]);
   const [optimizationResult, setOptimizationResult] = useState<OptimizationResult | null>(null);
-  const [constraints, setConstraints] = useState<OptimizationConstraints>({
+  const [constraints] = useState<OptimizationConstraints>({
     maxWeight: 0.15,
     minWeight: 0.01,
     maxSectorWeight: 0.30,
@@ -67,7 +67,7 @@ const AIPortfolioOptimizer: React.FC = () => {
   const [isOptimizing, setIsOptimizing] = useState(false);
   const [selectedStrategy, setSelectedStrategy] = useState<'max_sharpe' | 'min_volatility' | 'target_return' | 'equal_weight'>('max_sharpe');
   const [targetReturn, setTargetReturn] = useState(0.12);
-  const [maxVolatility, setMaxVolatility] = useState(0.20);
+  const [maxVolatility] = useState(0.20);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const strategies = [
@@ -276,10 +276,10 @@ const AIPortfolioOptimizer: React.FC = () => {
     }, 3000);
   };
 
-  const generateReasoning = (original: Asset, optimized: Asset | undefined, action: string): string => {
+  const generateReasoning = (_original: Asset, optimized: Asset | undefined, action: string): string => {
     if (!optimized) return 'No change recommended';
     
-    const change = optimized.allocation - original.allocation;
+    // const change = optimized.allocation - original.allocation;
     
     if (action === 'buy') {
       return `Increase allocation due to strong fundamentals and positive momentum. Expected return of ${(optimized.expectedReturn * 100).toFixed(1)}% with moderate risk.`;
@@ -446,7 +446,7 @@ const AIPortfolioOptimizer: React.FC = () => {
           </h2>
           
           <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            {assets.map((asset, index) => (
+            {assets.map((asset) => (
               <div key={asset.symbol} style={{
                 display: 'flex',
                 justifyContent: 'space-between',

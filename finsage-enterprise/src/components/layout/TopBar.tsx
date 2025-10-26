@@ -8,7 +8,7 @@ import {
   LogOut,
   RefreshCw
 } from 'lucide-react';
-import { cn } from '../../lib/utils';
+// import { cn } from '../../lib/utils';
 import { useSidebarOpen, useAppActions, useNotifications, useUser } from '../../store/useStore';
 
 const TopBar: React.FC = () => {
@@ -24,6 +24,7 @@ const TopBar: React.FC = () => {
       type: 'info',
       title: 'Refreshing Data',
       message: 'Updating market data and portfolio information...',
+      read: false,
     });
     // Trigger refresh logic here
     window.location.reload();
@@ -112,6 +113,7 @@ const TopBar: React.FC = () => {
                     type: 'info',
                     title: 'Logged Out',
                     message: 'You have been successfully logged out.',
+                    read: false,
                   });
                 }}
                 className="w-full px-4 py-2 text-left text-sm text-error-600 hover:bg-error-50 flex items-center space-x-2"
