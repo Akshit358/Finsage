@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSage Interactive - Complete Financial Intelligence Platform</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: #333; }
+        .container { max-width: 1600px; margin: 0 auto; padding: 2rem; }
+        .header { text-align: center; color: white; margin-bottom: 3rem; }
+        .header h1 { font-size: 4rem; font-weight: 800; margin-bottom: 0.5rem; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .header p { font-size: 1.5rem; opacity: 0.9; }
+        
+        /* Interactive Tooltip Styles */
+        .tooltip-trigger { position: relative; cursor: pointer; color: #667eea; text-decoration: underline; text-decoration-style: dotted; transition: all 0.3s ease; }
+        .tooltip-trigger:hover { color: #5a67d8; text-decoration-color: #5a67d8; }
+        
+        .tooltip-widget { 
+            position: absolute; 
+            background: linear-gradient(135deg, #1a202c, #2d3748); 
+            color: white; 
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3); 
+            z-index: 1000; 
+            max-width: 400px; 
+            min-width: 300px; 
+            opacity: 0; 
+            visibility: hidden; 
+            transform: translateY(10px); 
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .tooltip-widget.show { opacity: 1; visibility: visible; transform: translateY(0); }
+        
+        .tooltip-header { 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            margin-bottom: 0.5rem; 
+            color: #81c784; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+        }
+        
+        .tooltip-content { font-size: 0.9rem; line-height: 1.6; }
+        .tooltip-content h4 { color: #a78bfa; margin: 1rem 0 0.5rem 0; font-size: 1rem; }
+        .tooltip-content ul { margin: 0.5rem 0; padding-left: 1.2rem; }
+        .tooltip-content li { margin: 0.3rem 0; }
+        .tooltip-content .calculation { 
+            background: rgba(255, 255, 255, 0.1); 
+            padding: 0.8rem; 
+            border-radius: 8px; 
+            margin: 0.8rem 0; 
+            font-family: 'Monaco', 'Menlo', monospace; 
+            font-size: 0.8rem; 
+        }
+        .tooltip-content .risk-level { 
+            display: inline-block; 
+            padding: 0.2rem 0.6rem; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            margin-left: 0.5rem; 
+        }
+        .risk-low { background: #4caf50; color: white; }
+        .risk-medium { background: #ff9800; color: white; }
+        .risk-high { background: #f44336; color: white; }
+        .risk-very-high { background: #9c27b0; color: white; }
+        
+        .close-tooltip { 
+            position: absolute; 
+            top: 0.5rem; 
+            right: 0.5rem; 
+            background: none; 
+            border: none; 
+            color: #a0aec0; 
+            font-size: 1.2rem; 
+            cursor: pointer; 
+            padding: 0.2rem; 
+        }
+        .close-tooltip:hover { color: white; }
+        
+        .demo-section { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .demo-title { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: #333; text-align: center; }
+        .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 1rem 2rem; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); margin: 0.5rem; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .prediction-card { background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 12px; padding: 2rem; margin: 2rem 0; border-left: 4px solid #667eea; }
+        .prediction-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem; color: #333; }
+        .asset-allocation { margin: 1rem 0; }
+        .asset-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 1rem; 
+            margin: 0.5rem 0; 
+            background: white; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+            transition: all 0.3s ease; 
+        }
+        .asset-item:hover { transform: translateX(5px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+        .asset-name { font-weight: 600; color: #333; }
+        .asset-percentage { font-weight: 700; color: #667eea; font-size: 1.1rem; }
+        .asset-return { color: #059669; font-weight: 600; }
+        .asset-risk { font-size: 0.9rem; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .stat-value { font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 0.5rem; }
+        .stat-label { color: #666; font-size: 0.9rem; }
+        
+        .loading { display: none; text-align: center; padding: 2rem; }
+        .spinner { width: 40px; height: 40px; border: 4px solid rgba(102, 126, 234, 0.3); border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .tabs { display: flex; margin-bottom: 2rem; border-bottom: 2px solid #e5e7eb; }
+        .tab { padding: 1rem 2rem; background: none; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; color: #666; transition: all 0.3s ease; }
+        .tab.active { color: #667eea; border-bottom: 2px solid #667eea; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        .success-banner { background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 2rem; border-radius: 15px; margin-bottom: 3rem; text-align: center; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3); }
+        .success-banner h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .success-banner p { font-size: 1.2rem; opacity: 0.9; }
+        
+        @media (max-width: 768px) { 
+            .container { padding: 1rem; } 
+            .header h1 { font-size: 2.5rem; } 
+            .tooltip-widget { max-width: 300px; min-width: 250px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 FinSage Interactive</h1>
+            <p>Complete Financial Intelligence Platform with Interactive Learning</p>
+        </div>
+
+        <div class="success-banner">
+            <h2>🎉 Interactive Platform Complete!</h2>
+            <p>Hover over any investment term to learn more about it!</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('predictions')">AI Predictions</button>
+            <button class="tab" onclick="showTab('features')">All Features</button>
+            <button class="tab" onclick="showTab('demos')">Live Demos</button>
+            <button class="tab" onclick="showTab('education')">Learning Center</button>
+        </div>
+
+        <div id="predictions" class="tab-content active">
+            <div class="demo-section">
+                <h2 class="demo-title">🤖 Interactive AI Investment Predictions</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: #666;">
+                    Get personalized investment recommendations. <strong>Hover over any term</strong> to learn what it means and how it's calculated!
+                </p>
+                
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <button class="btn" onclick="getAIPrediction()">Get AI Investment Recommendation</button>
+                </div>
+
+                <div id="prediction-results" class="prediction-card" style="display: none;">
+                    <h3 class="prediction-title">Your Personalized Investment Recommendation</h3>
+                    <div id="prediction-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="features" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">Complete Feature List</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h3>🤖 Advanced AI & Machine Learning</h3>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="realtime-market-data">Real-time Market Data Integration</span></li>
+                            <li><span class="tooltip-trigger" data-term="sentiment-analysis">Advanced Sentiment Analysis</span></li>
+                            <li><span class="tooltip-trigger" data-term="predictive-analytics">Predictive Analytics & Forecasting</span></li>
+                            <li><span class="tooltip-trigger" data-term="risk-assessment">Risk Assessment Engine</span></li>
+                            <li><span class="tooltip-trigger" data-term="portfolio-rebalancing">Portfolio Rebalancing</span></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h3>📊 Enhanced Portfolio Management</h3>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="multi-asset-portfolio">Multi-Asset Portfolio Support</span></li>
+                            <li><span class="tooltip-trigger" data-term="tax-optimization">Tax Optimization Strategies</span></li>
+                            <li><span class="tooltip-trigger" data-term="performance-attribution">Performance Attribution Analysis</span></li>
+                            <li><span class="tooltip-trigger" data-term="backtesting">Backtesting Engine</span></li>
+                            <li><span class="tooltip-trigger" data-term="monte-carlo">Monte Carlo Simulations</span></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h3>⚡ Advanced Trading Features</h3>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="paper-trading">Paper Trading Simulation</span></li>
+                            <li><span class="tooltip-trigger" data-term="order-management">Order Management System</span></li>
+                            <li><span class="tooltip-trigger" data-term="position-sizing">Position Sizing Calculator</span></li>
+                            <li><span class="tooltip-trigger" data-term="technical-analysis">Technical Analysis (50+ Indicators)</span></li>
+                            <li><span class="tooltip-trigger" data-term="options-strategies">Options Strategy Builder</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="demos" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">Live Feature Demonstrations</h2>
+                
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <button class="btn" onclick="demoMarketData()">Real-time Market Data</button>
+                    <button class="btn" onclick="demoTrading()">Paper Trading</button>
+                    <button class="btn" onclick="demoSocial()">Social Features</button>
+                    <button class="btn" onclick="demoAnalytics()">Advanced Analytics</button>
+                </div>
+
+                <div id="demo-results" style="background: linear-gradient(135deg, #f8fafc, #e2e8f0); border-radius: 12px; padding: 2rem; margin-top: 2rem; display: none;">
+                    <h3>Demo Results</h3>
+                    <div id="demo-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="education" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">📚 Financial Education Center</h2>
+                <p style="text-align: center; margin-bottom: 2rem; color: #666;">
+                    Learn about financial terms and concepts. <strong>Hover over any term</strong> to get detailed explanations!
+                </p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h4>Investment Basics</h4>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="stocks">Stocks</span></li>
+                            <li><span class="tooltip-trigger" data-term="bonds">Bonds</span></li>
+                            <li><span class="tooltip-trigger" data-term="mutual-funds">Mutual Funds</span></li>
+                            <li><span class="tooltip-trigger" data-term="etfs">ETFs</span></li>
+                            <li><span class="tooltip-trigger" data-term="reits">REITs</span></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h4>Risk & Return</h4>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="risk-return">Risk vs Return</span></li>
+                            <li><span class="tooltip-trigger" data-term="diversification">Diversification</span></li>
+                            <li><span class="tooltip-trigger" data-term="volatility">Volatility</span></li>
+                            <li><span class="tooltip-trigger" data-term="beta">Beta</span></li>
+                            <li><span class="tooltip-trigger" data-term="sharpe-ratio">Sharpe Ratio</span></li>
+                        </ul>
+                    </div>
+
+                    <div style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);">
+                        <h4>Market Analysis</h4>
+                        <ul>
+                            <li><span class="tooltip-trigger" data-term="market-cap">Market Capitalization</span></li>
+                            <li><span class="tooltip-trigger" data-term="pe-ratio">P/E Ratio</span></li>
+                            <li><span class="tooltip-trigger" data-term="dividend-yield">Dividend Yield</span></li>
+                            <li><span class="tooltip-trigger" data-term="rsi">RSI (Relative Strength Index)</span></li>
+                            <li><span class="tooltip-trigger" data-term="macd">MACD</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tooltip Widget -->
+    <div id="tooltip-widget" class="tooltip-widget">
+        <button class="close-tooltip" onclick="closeTooltip()">&times;</button>
+        <div class="tooltip-header">
+            <span id="tooltip-icon">📊</span>
+            <span id="tooltip-title">Term</span>
+        </div>
+        <div class="tooltip-content" id="tooltip-content">
+            <!-- Content will be populated dynamically -->
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        
+        // Financial terms database with detailed explanations
+        const financialTerms = {
+            'large-cap-stocks': {
+                icon: '🏢',
+                title: 'Large Cap Stocks',
+                definition: 'Stocks of companies with market capitalization over $10 billion',
+                explanation: 'Large cap stocks represent established companies with stable earnings and lower volatility. They are considered safer investments but typically offer lower growth potential.',
+                characteristics: [
+                    'Market cap: $10+ billion',
+                    'Established companies with proven track records',
+                    'Lower volatility and risk',
+                    'Regular dividend payments',
+                    'High liquidity'
+                ],
+                calculation: 'Market Cap = Share Price × Total Outstanding Shares',
+                riskLevel: 'Medium',
+                examples: 'Apple (AAPL), Microsoft (MSFT), Amazon (AMZN)'
+            },
+            'small-cap-stocks': {
+                icon: '🚀',
+                title: 'Small Cap Stocks',
+                definition: 'Stocks of companies with market capitalization between $300 million and $2 billion',
+                explanation: 'Small cap stocks represent smaller, often younger companies with higher growth potential but also higher risk and volatility.',
+                characteristics: [
+                    'Market cap: $300M - $2B',
+                    'Higher growth potential',
+                    'Higher volatility and risk',
+                    'Less liquid than large caps',
+                    'Often no dividends'
+                ],
+                calculation: 'Market Cap = Share Price × Total Outstanding Shares',
+                riskLevel: 'High',
+                examples: 'Emerging tech companies, biotech startups'
+            },
+            'international-stocks': {
+                icon: '🌍',
+                title: 'International Stocks',
+                definition: 'Stocks of companies based outside your home country',
+                explanation: 'International stocks provide geographic diversification and exposure to different economic cycles, but come with currency and political risks.',
+                characteristics: [
+                    'Companies outside your home country',
+                    'Currency exchange risk',
+                    'Political and regulatory risks',
+                    'Different economic cycles',
+                    'Diversification benefits'
+                ],
+                calculation: 'Return = (Local Return + Currency Return) × Allocation %',
+                riskLevel: 'High',
+                examples: 'Toyota (Japan), Samsung (South Korea), Nestle (Switzerland)'
+            },
+            'emerging-markets': {
+                icon: '🌱',
+                title: 'Emerging Markets',
+                definition: 'Stocks from developing countries with rapidly growing economies',
+                explanation: 'Emerging markets offer the highest growth potential but also the highest risk due to political instability, currency volatility, and less developed financial systems.',
+                characteristics: [
+                    'Developing countries (BRICS, etc.)',
+                    'Highest growth potential',
+                    'Highest risk and volatility',
+                    'Currency and political risks',
+                    'Less developed financial systems'
+                ],
+                calculation: 'Expected Return = GDP Growth + Market Premium + Currency Factor',
+                riskLevel: 'Very High',
+                examples: 'Brazil, Russia, India, China, South Africa'
+            },
+            'bonds': {
+                icon: '📜',
+                title: 'Bonds',
+                definition: 'Fixed-income securities representing loans to governments or corporations',
+                explanation: 'Bonds are debt instruments that pay regular interest and return principal at maturity. They provide steady income with lower risk than stocks.',
+                characteristics: [
+                    'Fixed interest payments (coupons)',
+                    'Principal returned at maturity',
+                    'Lower risk than stocks',
+                    'Regular income stream',
+                    'Inverse relationship with interest rates'
+                ],
+                calculation: 'Bond Price = Σ(Coupon/(1+r)^t) + Face Value/(1+r)^n',
+                riskLevel: 'Low',
+                examples: 'US Treasury Bonds, Corporate Bonds, Municipal Bonds'
+            },
+            'reits': {
+                icon: '🏠',
+                title: 'REITs (Real Estate Investment Trusts)',
+                definition: 'Companies that own and operate income-producing real estate',
+                explanation: 'REITs allow investors to invest in real estate without buying physical properties. They must distribute 90% of taxable income as dividends.',
+                characteristics: [
+                    'Real estate investment without physical ownership',
+                    'High dividend yields (4-8%)',
+                    'Required to distribute 90% of income',
+                    'Liquidity through stock exchange',
+                    'Tax advantages'
+                ],
+                calculation: 'REIT Value = Net Operating Income / Cap Rate',
+                riskLevel: 'Medium',
+                examples: 'American Tower (AMT), Prologis (PLD), Realty Income (O)'
+            },
+            'risk-assessment': {
+                icon: '⚠️',
+                title: 'Risk Assessment',
+                definition: 'Evaluation of potential losses in an investment portfolio',
+                explanation: 'Risk assessment quantifies the probability and magnitude of potential losses using statistical models and historical data analysis.',
+                characteristics: [
+                    'Value at Risk (VaR) calculations',
+                    'Stress testing scenarios',
+                    'Correlation analysis',
+                    'Volatility measurements',
+                    'Downside risk metrics'
+                ],
+                calculation: 'VaR = Portfolio Value × Z-Score × Portfolio Volatility × √Time',
+                riskLevel: 'N/A',
+                examples: 'Monte Carlo simulations, Historical backtesting'
+            },
+            'portfolio-rebalancing': {
+                icon: '⚖️',
+                title: 'Portfolio Rebalancing',
+                definition: 'Process of realigning portfolio weights to maintain target asset allocation',
+                explanation: 'Rebalancing ensures your portfolio stays aligned with your risk tolerance and investment goals by selling overperforming assets and buying underperforming ones.',
+                characteristics: [
+                    'Maintains target asset allocation',
+                    'Reduces risk over time',
+                    'Takes advantage of market cycles',
+                    'Can be time-based or threshold-based',
+                    'May trigger tax implications'
+                ],
+                calculation: 'Rebalance Amount = (Current % - Target %) × Portfolio Value',
+                riskLevel: 'N/A',
+                examples: 'Quarterly rebalancing, 5% threshold rebalancing'
+            },
+            'diversification': {
+                icon: '🎯',
+                title: 'Diversification',
+                definition: 'Strategy of spreading investments across different assets to reduce risk',
+                explanation: 'Diversification reduces portfolio risk by investing in assets that don\'t move in perfect correlation, following the principle "don\'t put all eggs in one basket."',
+                characteristics: [
+                    'Reduces overall portfolio risk',
+                    'Spreads risk across different assets',
+                    'Reduces impact of single asset failure',
+                    'Can reduce returns in bull markets',
+                    'Requires careful asset selection'
+                ],
+                calculation: 'Portfolio Risk = √(Σ(wi² × σi²) + Σ(wi × wj × σi × σj × ρij))',
+                riskLevel: 'N/A',
+                examples: 'Stocks + Bonds + REITs + International + Commodities'
+            },
+            'sharpe-ratio': {
+                icon: '📈',
+                title: 'Sharpe Ratio',
+                definition: 'Measure of risk-adjusted return, showing excess return per unit of risk',
+                explanation: 'The Sharpe ratio helps investors understand if the extra return they\'re getting is worth the additional risk they\'re taking.',
+                characteristics: [
+                    'Higher is better (above 1.0 is good)',
+                    'Measures risk-adjusted performance',
+                    'Compares excess return to volatility',
+                    'Risk-free rate is the benchmark',
+                    'Standard deviation measures risk'
+                ],
+                calculation: 'Sharpe Ratio = (Portfolio Return - Risk-free Rate) / Portfolio Volatility',
+                riskLevel: 'N/A',
+                examples: 'Portfolio with 12% return, 3% risk-free rate, 8% volatility = 1.125'
+            }
+        };
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function showTooltip(term) {
+            const tooltip = document.getElementById('tooltip-widget');
+            const termData = financialTerms[term];
+            
+            if (!termData) return;
+            
+            document.getElementById('tooltip-icon').textContent = termData.icon;
+            document.getElementById('tooltip-title').textContent = termData.title;
+            
+            const content = `
+                <p><strong>Definition:</strong> ${termData.definition}</p>
+                <p>${termData.explanation}</p>
+                
+                <h4>Key Characteristics:</h4>
+                <ul>
+                    ${termData.characteristics.map(char => `<li>${char}</li>`).join('')}
+                </ul>
+                
+                <h4>Calculation Method:</h4>
+                <div class="calculation">${termData.calculation}</div>
+                
+                <h4>Risk Level: <span class="risk-level risk-${termData.riskLevel.toLowerCase().replace(' ', '-')}">${termData.riskLevel}</span></h4>
+                
+                <h4>Examples:</h4>
+                <p>${termData.examples}</p>
+            `;
+            
+            document.getElementById('tooltip-content').innerHTML = content;
+            tooltip.classList.add('show');
+        }
+
+        function closeTooltip() {
+            document.getElementById('tooltip-widget').classList.remove('show');
+        }
+
+        // Add event listeners to all tooltip triggers
+        document.addEventListener('DOMContentLoaded', function() {
+            const triggers = document.querySelectorAll('.tooltip-trigger');
+            triggers.forEach(trigger => {
+                trigger.addEventListener('mouseenter', function() {
+                    const term = this.getAttribute('data-term');
+                    showTooltip(term);
+                });
+                
+                trigger.addEventListener('click', function() {
+                    const term = this.getAttribute('data-term');
+                    showTooltip(term);
+                });
+            });
+        });
+
+        async function getAIPrediction() {
+            const predictionCard = document.getElementById('prediction-results');
+            const predictionContent = document.getElementById('prediction-content');
+            
+            predictionCard.style.display = 'block';
+            predictionContent.innerHTML = '<div class="loading"><div class="spinner"></div>Getting AI recommendation...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/prediction/predict`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        age: 35,
+                        annual_income: 100000,
+                        risk_tolerance: 'high',
+                        investment_horizon_years: 20
+                    })
+                });
+                
+                const data = await response.json();
+                
+                let html = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${data.recommendation_score}%</div>
+                            <div class="stat-label">Recommendation Score</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${data.total_expected_return}%</div>
+                            <div class="stat-label">Expected Annual Return</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${data.confidence_level}%</div>
+                            <div class="stat-label">Confidence Level</div>
+                        </div>
+                    </div>
+                    
+                    <div class="asset-allocation">
+                        <h4>Recommended Asset Allocation:</h4>
+                        <p style="margin-bottom: 1rem; color: #666;">Hover over any investment type to learn more about it!</p>
+                `;
+                
+                data.asset_allocations.forEach(asset => {
+                    const termKey = asset.asset_class.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z-]/g, '');
+                    html += `
+                        <div class="asset-item">
+                            <div>
+                                <div class="asset-name">
+                                    <span class="tooltip-trigger" data-term="${termKey}">${asset.asset_class}</span>
+                                    <span class="risk-level risk-${asset.risk_level.toLowerCase().replace(' ', '-')}">${asset.risk_level}</span>
+                                </div>
+                                <div class="asset-risk">Risk Level: ${asset.risk_level}</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div class="asset-percentage">${asset.percentage}%</div>
+                                <div class="asset-return">+${asset.expected_return}% expected return</div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                html += `
+                    </div>
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: #e6fffa; border-radius: 8px; border-left: 4px solid #10b981;">
+                        <strong>Risk Assessment:</strong> ${data.risk_assessment}
+                    </div>
+                `;
+                
+                predictionContent.innerHTML = html;
+                
+                // Re-add event listeners to new tooltip triggers
+                const newTriggers = predictionContent.querySelectorAll('.tooltip-trigger');
+                newTriggers.forEach(trigger => {
+                    trigger.addEventListener('mouseenter', function() {
+                        const term = this.getAttribute('data-term');
+                        showTooltip(term);
+                    });
+                    
+                    trigger.addEventListener('click', function() {
+                        const term = this.getAttribute('data-term');
+                        showTooltip(term);
+                    });
+                });
+                
+            } catch (error) {
+                predictionContent.innerHTML = `
+                    <div style="text-align: center; color: #e53e3e;">
+                        <h4>⚠️ API Connection Error</h4>
+                        <p>Using mock data for demonstration...</p>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">95%</div>
+                                <div class="stat-label">Recommendation Score</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">10.28%</div>
+                                <div class="stat-label">Expected Annual Return</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">75%</div>
+                                <div class="stat-label">Confidence Level</div>
+                            </div>
+                        </div>
+                        <div class="asset-allocation">
+                            <h4>Recommended Asset Allocation:</h4>
+                            <p style="margin-bottom: 1rem; color: #666;">Hover over any investment type to learn more about it!</p>
+                            <div class="asset-item">
+                                <div>
+                                    <div class="asset-name">
+                                        <span class="tooltip-trigger" data-term="large-cap-stocks">Large Cap Stocks</span>
+                                        <span class="risk-level risk-medium">Medium</span>
+                                    </div>
+                                    <div class="asset-risk">Risk Level: Medium</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="asset-percentage">35%</div>
+                                    <div class="asset-return">+9.27% expected return</div>
+                                </div>
+                            </div>
+                            <div class="asset-item">
+                                <div>
+                                    <div class="asset-name">
+                                        <span class="tooltip-trigger" data-term="small-cap-stocks">Small Cap Stocks</span>
+                                        <span class="risk-level risk-high">High</span>
+                                    </div>
+                                    <div class="asset-risk">Risk Level: High</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="asset-percentage">25%</div>
+                                    <div class="asset-return">+13.08% expected return</div>
+                                </div>
+                            </div>
+                            <div class="asset-item">
+                                <div>
+                                    <div class="asset-name">
+                                        <span class="tooltip-trigger" data-term="international-stocks">International Stocks</span>
+                                        <span class="risk-level risk-high">High</span>
+                                    </div>
+                                    <div class="asset-risk">Risk Level: High</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="asset-percentage">20%</div>
+                                    <div class="asset-return">+10.36% expected return</div>
+                                </div>
+                            </div>
+                            <div class="asset-item">
+                                <div>
+                                    <div class="asset-name">
+                                        <span class="tooltip-trigger" data-term="emerging-markets">Emerging Markets</span>
+                                        <span class="risk-level risk-very-high">Very High</span>
+                                    </div>
+                                    <div class="asset-risk">Risk Level: Very High</span>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="asset-percentage">10%</div>
+                                    <div class="asset-return">+11.99% expected return</div>
+                                </div>
+                            </div>
+                            <div class="asset-item">
+                                <div>
+                                    <div class="asset-name">
+                                        <span class="tooltip-trigger" data-term="bonds">Bonds</span>
+                                        <span class="risk-level risk-low">Low</span>
+                                    </div>
+                                    <div class="asset-risk">Risk Level: Low</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="asset-percentage">10%</div>
+                                    <div class="asset-return">+4.91% expected return</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: #e6fffa; border-radius: 8px; border-left: 4px solid #10b981;">
+                            <strong>Risk Assessment:</strong> Very Aggressive - Maximum growth potential with high risk
+                        </div>
+                    </div>
+                `;
+                
+                // Re-add event listeners to mock data tooltip triggers
+                const mockTriggers = predictionContent.querySelectorAll('.tooltip-trigger');
+                mockTriggers.forEach(trigger => {
+                    trigger.addEventListener('mouseenter', function() {
+                        const term = this.getAttribute('data-term');
+                        showTooltip(term);
+                    });
+                    
+                    trigger.addEventListener('click', function() {
+                        const term = this.getAttribute('data-term');
+                        showTooltip(term);
+                    });
+                });
+            }
+        }
+
+        async function demoMarketData() {
+            showDemoResults('Loading real-time market data...');
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/market/realtime?symbols=AAPL,MSFT,GOOGL`);
+                const data = await response.json();
+                showDemoResults(`
+                    <h4>Real-time Market Data</h4>
+                    <p>✅ Successfully retrieved market data for ${Object.keys(data.data.market_data).length} symbols</p>
+                    <pre>${JSON.stringify(data.data.market_data, null, 2)}</pre>
+                `);
+            } catch (error) {
+                showDemoResults(`
+                    <h4>Real-time Market Data (Mock)</h4>
+                    <p>📊 AAPL: $175.50 (+2.3%)</p>
+                    <p>📊 MSFT: $350.25 (+1.8%)</p>
+                    <p>📊 GOOGL: $2800.75 (+3.1%)</p>
+                    <p><em>Note: Using mock data as API is not running</em></p>
+                `);
+            }
+        }
+
+        async function demoTrading() {
+            showDemoResults('Loading paper trading demo...');
+            showDemoResults(`
+                <h4>Paper Trading Demo (Mock)</h4>
+                <p>📊 Portfolio Value: $105,250 (+5.25%)</p>
+                <p>📊 Cash Balance: $25,000</p>
+                <p>📊 Positions: 3 stocks</p>
+                <p>📊 Today's P&L: +$1,250</p>
+                <p><em>Note: Using mock data as API is not running</em></p>
+            `);
+        }
+
+        async function demoSocial() {
+            showDemoResults('Loading social features...');
+            showDemoResults(`
+                <h4>Social Features Demo (Mock)</h4>
+                <p>👥 Followers: 1,250</p>
+                <p>📈 Following: 45 traders</p>
+                <p>🏆 Rank: #12 on leaderboard</p>
+                <p>💬 Discussions: 23 active</p>
+                <p>📚 Strategies: 5 shared</p>
+                <p><em>Note: Using mock data as API is not running</em></p>
+            `);
+        }
+
+        async function demoAnalytics() {
+            showDemoResults('Loading advanced analytics...');
+            showDemoResults(`
+                <h4>Advanced Analytics Demo (Mock)</h4>
+                <p>📊 Portfolio Beta: 1.15</p>
+                <p>📊 Sharpe Ratio: 1.85</p>
+                <p>📊 Max Drawdown: -8.2%</p>
+                <p>📊 Volatility: 18.5%</p>
+                <p>📊 VaR (95%): -$2,500</p>
+                <p><em>Note: Using mock data as API is not running</em></p>
+            `);
+        }
+
+        function showDemoResults(content) {
+            const resultCard = document.getElementById('demo-results');
+            const demoContent = document.getElementById('demo-content');
+            demoContent.innerHTML = content;
+            resultCard.style.display = 'block';
+        }
+
+        // Close tooltip when clicking outside
+        document.addEventListener('click', function(event) {
+            const tooltip = document.getElementById('tooltip-widget');
+            if (!tooltip.contains(event.target) && !event.target.classList.contains('tooltip-trigger')) {
+                closeTooltip();
+            }
+        });
+
+        // Initialize
+        console.log('🚀 FinSage Interactive Platform loaded successfully!');
+        console.log('📊 Hover over any financial term to learn more!');
+        console.log('🎯 Interactive tooltips with detailed explanations available');
+    </script>
+</body>
+</html>
+

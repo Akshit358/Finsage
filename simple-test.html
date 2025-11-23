@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple FinSage Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        .loading { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>FinSage Simple Test</h1>
+    
+    <div class="test-section">
+        <h3>Portfolio Test</h3>
+        <button onclick="testPortfolio()">Test Portfolio API</button>
+        <div id="portfolio-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Prediction Test</h3>
+        <button onclick="testPrediction()">Test Prediction API</button>
+        <div id="prediction-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Main App Test</h3>
+        <button onclick="testMainApp()">Test Main App</button>
+        <div id="main-app-result"></div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = 'http://54.227.68.44:8000';
+        
+        async function testPortfolio() {
+            const result = document.getElementById('portfolio-result');
+            result.innerHTML = '<p class="loading">Testing portfolio API...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`);
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <p class="success">✅ Portfolio API working!</p>
+                    <p>Total Value: $${data.totalValue}</p>
+                    <p>Positions: ${data.positions?.length || 0}</p>
+                    <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                `;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Portfolio API failed: ${error.message}</p>`;
+            }
+        }
+        
+        async function testPrediction() {
+            const result = document.getElementById('prediction-result');
+            result.innerHTML = '<p class="loading">Testing prediction API...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/prediction/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        age: 30,
+                        annual_income: 50000,
+                        risk_tolerance: 'medium',
+                        financial_goals: 'retirement',
+                        investment_horizon_years: 10,
+                        dependents: 0,
+                        debt_amount: 0,
+                        monthly_expenses: 3000
+                    })
+                });
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <p class="success">✅ Prediction API working!</p>
+                    <p>Recommendations: ${data.prediction?.recommendations?.length || 0}</p>
+                    <p>Confidence: ${data.prediction?.confidence || 'N/A'}</p>
+                    <p>Response: ${JSON.stringify(data, null, 2)}</p>
+                `;
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Prediction API failed: ${error.message}</p>`;
+            }
+        }
+        
+        async function testMainApp() {
+            const result = document.getElementById('main-app-result');
+            result.innerHTML = '<p class="loading">Testing main app...</p>';
+            
+            try {
+                // Test if the main app loads
+                const response = await fetch('https://dju1t116k25r5.cloudfront.net/');
+                const html = await response.text();
+                
+                if (html.includes('React App')) {
+                    result.innerHTML = `
+                        <p class="success">✅ Main app loads successfully!</p>
+                        <p>HTML contains React App: ${html.includes('React App')}</p>
+                        <p>HTML length: ${html.length} characters</p>
+                    `;
+                } else {
+                    result.innerHTML = `<p class="error">❌ Main app not loading properly</p>`;
+                }
+            } catch (error) {
+                result.innerHTML = `<p class="error">❌ Main app test failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

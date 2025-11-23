@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSage Advanced - Next Level Financial Intelligence</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 0.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            padding: 1rem 2rem;
+            margin: 0 0.5rem;
+            border: none;
+            background: transparent;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-tab.active {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .demo-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .demo-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .result-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .result-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(102, 126, 234, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .api-demo {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .api-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .api-endpoint {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .endpoint-method {
+            font-weight: 600;
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .endpoint-url {
+            font-family: 'Monaco', 'Menlo', monospace;
+            color: #333;
+        }
+
+        .endpoint-description {
+            color: #666;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .success-message {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #10b981;
+        }
+
+        .advanced-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .advanced-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .advanced-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .advanced-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .advanced-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .test-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 FinSage Advanced</h1>
+            <p>Next Level Financial Intelligence Platform</p>
+        </div>
+
+        <div class="success-message">
+            <strong>🎉 NEXT LEVEL ACHIEVED!</strong> Your FinSage platform now includes advanced AI features, 
+            sentiment analysis, portfolio optimization, and robo-advisor capabilities!
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="showTab('sentiment')">Sentiment Analysis</button>
+            <button class="nav-tab" onclick="showTab('optimization')">Portfolio Optimization</button>
+            <button class="nav-tab" onclick="showTab('robo-advisor')">Robo-Advisor</button>
+            <button class="nav-tab" onclick="showTab('analytics')">Analytics</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="advanced-features">
+                <div class="advanced-card">
+                    <div class="advanced-icon">🧠</div>
+                    <div class="advanced-title">AI Sentiment Analysis</div>
+                    <div class="advanced-description">
+                        Advanced market sentiment analysis using machine learning algorithms to analyze 
+                        news, social media, and market data for investment insights.
+                    </div>
+                    <button class="test-btn" onclick="showTab('sentiment')">Try Sentiment Analysis</button>
+                </div>
+
+                <div class="advanced-card">
+                    <div class="advanced-icon">⚡</div>
+                    <div class="advanced-title">Portfolio Optimization</div>
+                    <div class="advanced-description">
+                        Modern Portfolio Theory implementation with Black-Litterman model for 
+                        sophisticated asset allocation and risk management.
+                    </div>
+                    <button class="test-btn" onclick="showTab('optimization')">Optimize Portfolio</button>
+                </div>
+
+                <div class="advanced-card">
+                    <div class="advanced-icon">🤖</div>
+                    <div class="advanced-title">Robo-Advisor</div>
+                    <div class="advanced-description">
+                        Comprehensive robo-advisor recommendations with personalized investment 
+                        strategies, educational resources, and automated guidance.
+                    </div>
+                    <button class="test-btn" onclick="showTab('robo-advisor')">Get Recommendations</button>
+                </div>
+
+                <div class="advanced-card">
+                    <div class="advanced-icon">📊</div>
+                    <div class="advanced-title">Advanced Analytics</div>
+                    <div class="advanced-description">
+                        Real-time market indicators, performance analytics, and comprehensive 
+                        financial metrics for informed decision making.
+                    </div>
+                    <button class="test-btn" onclick="showTab('analytics')">View Analytics</button>
+                </div>
+            </div>
+
+            <div class="api-demo">
+                <h2 class="api-title">🚀 New Advanced API Endpoints</h2>
+                <div class="api-endpoint">
+                    <span class="endpoint-method">POST</span>
+                    <span class="endpoint-url">/api/v1/advanced/sentiment/analyze</span>
+                    <div class="endpoint-description">Analyze market sentiment for multiple symbols with ML algorithms</div>
+                </div>
+                <div class="api-endpoint">
+                    <span class="endpoint-method">POST</span>
+                    <span class="endpoint-url">/api/v1/advanced/portfolio/optimize</span>
+                    <div class="endpoint-description">Advanced portfolio optimization using Modern Portfolio Theory</div>
+                </div>
+                <div class="api-endpoint">
+                    <span class="endpoint-method">POST</span>
+                    <span class="endpoint-url">/api/v1/advanced/robo-advisor/recommendations</span>
+                    <div class="endpoint-description">Comprehensive robo-advisor recommendations and guidance</div>
+                </div>
+                <div class="api-endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <span class="endpoint-url">/api/v1/advanced/market/indicators</span>
+                    <div class="endpoint-description">Real-time market technical indicators and analysis</div>
+                </div>
+                <div class="api-endpoint">
+                    <span class="endpoint-method">GET</span>
+                    <span class="endpoint-url">/api/v1/advanced/analytics/performance</span>
+                    <div class="endpoint-description">Comprehensive performance analytics and risk metrics</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sentiment Analysis Tab -->
+        <div id="sentiment" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">🧠 AI Sentiment Analysis</h2>
+                <div class="form-group">
+                    <label for="symbols">Stock Symbols (comma-separated)</label>
+                    <input type="text" id="symbols" value="AAPL,GOOGL,MSFT,TSLA" placeholder="Enter symbols like AAPL,GOOGL,MSFT">
+                </div>
+                <button class="btn" onclick="analyzeSentiment()">Analyze Market Sentiment</button>
+                
+                <div class="loading" id="sentiment-loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing market sentiment...</p>
+                </div>
+
+                <div class="result-card" id="sentiment-result">
+                    <div class="result-header">
+                        <h3>Market Sentiment Analysis</h3>
+                    </div>
+                    <div id="sentiment-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Portfolio Optimization Tab -->
+        <div id="optimization" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">⚡ Advanced Portfolio Optimization</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="opt-age">Age</label>
+                        <input type="number" id="opt-age" value="35" min="18" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="opt-income">Annual Income ($)</label>
+                        <input type="number" id="opt-income" value="100000" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="opt-risk">Risk Tolerance</label>
+                        <select id="opt-risk">
+                            <option value="low">Low Risk</option>
+                            <option value="medium" selected>Medium Risk</option>
+                            <option value="high">High Risk</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="opt-horizon">Investment Horizon (years)</label>
+                        <input type="number" id="opt-horizon" value="15" min="1" max="50">
+                    </div>
+                </div>
+                <button class="btn" onclick="optimizePortfolio()">Optimize Portfolio</button>
+                
+                <div class="loading" id="optimization-loading">
+                    <div class="spinner"></div>
+                    <p>Optimizing portfolio using Modern Portfolio Theory...</p>
+                </div>
+
+                <div class="result-card" id="optimization-result">
+                    <div class="result-header">
+                        <h3>Optimized Portfolio Allocation</h3>
+                    </div>
+                    <div id="optimization-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Robo-Advisor Tab -->
+        <div id="robo-advisor" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">🤖 Robo-Advisor Recommendations</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="robo-age">Age</label>
+                        <input type="number" id="robo-age" value="28" min="18" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="robo-income">Annual Income ($)</label>
+                        <input type="number" id="robo-income" value="75000" min="0">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="robo-risk">Risk Tolerance</label>
+                        <select id="robo-risk">
+                            <option value="low">Low Risk</option>
+                            <option value="medium" selected>Medium Risk</option>
+                            <option value="high">High Risk</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="robo-horizon">Investment Horizon (years)</label>
+                        <input type="number" id="robo-horizon" value="20" min="1" max="50">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="robo-goals">Investment Goals (comma-separated)</label>
+                    <input type="text" id="robo-goals" value="retirement,house purchase,emergency fund" placeholder="Enter goals like retirement,house purchase">
+                </div>
+                <div class="form-group">
+                    <label for="robo-experience">Experience Level</label>
+                    <select id="robo-experience">
+                        <option value="beginner">Beginner</option>
+                        <option value="intermediate" selected>Intermediate</option>
+                        <option value="advanced">Advanced</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="getRoboAdvisorRecommendations()">Get Recommendations</button>
+                
+                <div class="loading" id="robo-loading">
+                    <div class="spinner"></div>
+                    <p>Generating personalized recommendations...</p>
+                </div>
+
+                <div class="result-card" id="robo-result">
+                    <div class="result-header">
+                        <h3>Robo-Advisor Recommendations</h3>
+                    </div>
+                    <div id="robo-content"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="demo-section">
+                <h2 class="demo-title">📊 Advanced Analytics Dashboard</h2>
+                <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                    <button class="btn" onclick="getMarketIndicators()">Market Indicators</button>
+                    <button class="btn btn-secondary" onclick="getDailyInsights()">Daily Insights</button>
+                    <button class="btn btn-secondary" onclick="getPerformanceAnalytics()">Performance Analytics</button>
+                </div>
+                
+                <div class="loading" id="analytics-loading">
+                    <div class="spinner"></div>
+                    <p>Loading analytics data...</p>
+                </div>
+
+                <div class="result-card" id="analytics-result">
+                    <div class="result-header">
+                        <h3>Analytics Dashboard</h3>
+                    </div>
+                    <div id="analytics-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        async function analyzeSentiment() {
+            const loading = document.getElementById('sentiment-loading');
+            const result = document.getElementById('sentiment-result');
+            const symbols = document.getElementById('symbols').value.split(',').map(s => s.trim());
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/sentiment/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbols: symbols })
+                });
+
+                const data = await response.json();
+                displaySentimentResults(data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing sentiment. Make sure the backend server is running.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function displaySentimentResults(data) {
+            const content = document.getElementById('sentiment-content');
+            
+            if (data.data && data.data.symbol_analysis) {
+                let html = '<div class="result-stats">';
+                
+                // Overall sentiment
+                html += `
+                    <div class="stat-item">
+                        <div class="stat-label">Overall Sentiment</div>
+                        <div class="stat-value">${data.data.overall_sentiment > 0 ? 'Bullish' : 'Bearish'}</div>
+                    </div>
+                `;
+                
+                // Market outlook
+                html += `
+                    <div class="stat-item">
+                        <div class="stat-label">Market Outlook</div>
+                        <div class="stat-value">${data.data.market_outlook.outlook}</div>
+                    </div>
+                `;
+                
+                html += '</div>';
+                
+                // Individual symbol analysis
+                html += '<h4>Symbol Analysis</h4><div class="allocation-grid">';
+                
+                Object.entries(data.data.symbol_analysis).forEach(([symbol, analysis]) => {
+                    html += `
+                        <div class="allocation-item">
+                            <div class="asset-name">${symbol}</div>
+                            <div class="asset-percentage">${analysis.sentiment_label}</div>
+                            <div class="asset-amount">Confidence: ${Math.round(analysis.confidence * 100)}%</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+            }
+            
+            document.getElementById('sentiment-result').style.display = 'block';
+        }
+
+        async function optimizePortfolio() {
+            const loading = document.getElementById('optimization-loading');
+            const result = document.getElementById('optimization-result');
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            try {
+                const data = {
+                    age: parseInt(document.getElementById('opt-age').value),
+                    annual_income: parseInt(document.getElementById('opt-income').value),
+                    risk_tolerance: document.getElementById('opt-risk').value,
+                    investment_horizon_years: parseInt(document.getElementById('opt-horizon').value)
+                };
+
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/portfolio/optimize`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result_data = await response.json();
+                displayOptimizationResults(result_data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error optimizing portfolio. Make sure the backend server is running.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayOptimizationResults(data) {
+            const content = document.getElementById('optimization-content');
+            
+            if (data.data && data.data.optimized_allocation) {
+                let html = '<div class="result-stats">';
+                
+                // Risk metrics
+                if (data.data.risk_metrics) {
+                    html += `
+                        <div class="stat-item">
+                            <div class="stat-label">Portfolio Volatility</div>
+                            <div class="stat-value">${data.data.risk_metrics.portfolio_volatility}%</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Sharpe Ratio</div>
+                            <div class="stat-value">${data.data.risk_metrics.sharpe_ratio}</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Max Drawdown</div>
+                            <div class="stat-value">${data.data.risk_metrics.max_drawdown}%</div>
+                        </div>
+                    `;
+                }
+                
+                html += '</div>';
+                
+                // Optimized allocation
+                html += '<h4>Optimized Asset Allocation</h4><div class="allocation-grid">';
+                
+                data.data.optimized_allocation.forEach(asset => {
+                    html += `
+                        <div class="allocation-item">
+                            <div class="asset-name">${asset.asset_class}</div>
+                            <div class="asset-percentage">${asset.percentage}%</div>
+                            <div class="asset-amount">Expected Return: ${asset.expected_return}%</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+                content.innerHTML = html;
+            }
+            
+            document.getElementById('optimization-result').style.display = 'block';
+        }
+
+        async function getRoboAdvisorRecommendations() {
+            const loading = document.getElementById('robo-loading');
+            const result = document.getElementById('robo-result');
+            
+            loading.style.display = 'block';
+            result.style.display = 'none';
+
+            try {
+                const data = {
+                    age: parseInt(document.getElementById('robo-age').value),
+                    annual_income: parseInt(document.getElementById('robo-income').value),
+                    risk_tolerance: document.getElementById('robo-risk').value,
+                    investment_horizon_years: parseInt(document.getElementById('robo-horizon').value),
+                    investment_goals: document.getElementById('robo-goals').value.split(',').map(g => g.trim()),
+                    experience_level: document.getElementById('robo-experience').value
+                };
+
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/robo-advisor/recommendations`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result_data = await response.json();
+                displayRoboAdvisorResults(result_data);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting robo-advisor recommendations. Make sure the backend server is running.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function displayRoboAdvisorResults(data) {
+            const content = document.getElementById('robo-content');
+            
+            if (data.data) {
+                let html = '<div class="result-stats">';
+                
+                html += `
+                    <div class="stat-item">
+                        <div class="stat-label">Risk Score</div>
+                        <div class="stat-value">${data.data.risk_score}/10</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Investment Style</div>
+                        <div class="stat-value">${data.data.investment_style}</div>
+                    </div>
+                `;
+                
+                html += '</div>';
+                
+                // Strategy recommendation
+                html += `<h4>Recommended Strategy</h4><p>${data.data.recommended_strategy}</p>`;
+                
+                // Portfolio suggestions
+                if (data.data.portfolio_suggestions) {
+                    html += '<h4>Portfolio Suggestions</h4><div class="allocation-grid">';
+                    
+                    data.data.portfolio_suggestions.forEach(suggestion => {
+                        html += `
+                            <div class="allocation-item">
+                                <div class="asset-name">${suggestion.name}</div>
+                                <div class="asset-percentage">${suggestion.allocation}%</div>
+                                <div class="asset-amount">${suggestion.description}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                }
+                
+                content.innerHTML = html;
+            }
+            
+            document.getElementById('robo-result').style.display = 'block';
+        }
+
+        async function getMarketIndicators() {
+            showAnalyticsLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/market/indicators`);
+                const data = await response.json();
+                displayAnalyticsResults(data, 'Market Indicators');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting market indicators.');
+            }
+        }
+
+        async function getDailyInsights() {
+            showAnalyticsLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/insights/daily`);
+                const data = await response.json();
+                displayAnalyticsResults(data, 'Daily Market Insights');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting daily insights.');
+            }
+        }
+
+        async function getPerformanceAnalytics() {
+            showAnalyticsLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/advanced/analytics/performance`);
+                const data = await response.json();
+                displayAnalyticsResults(data, 'Performance Analytics');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error getting performance analytics.');
+            }
+        }
+
+        function showAnalyticsLoading() {
+            document.getElementById('analytics-loading').style.display = 'block';
+            document.getElementById('analytics-result').style.display = 'none';
+        }
+
+        function displayAnalyticsResults(data, title) {
+            const content = document.getElementById('analytics-content');
+            
+            let html = `<h4>${title}</h4>`;
+            
+            if (data.indicators || data.insights || data.analytics) {
+                const dataToShow = data.indicators || data.insights || data.analytics;
+                
+                Object.entries(dataToShow).forEach(([key, value]) => {
+                    html += `<h5>${key.replace(/_/g, ' ').toUpperCase()}</h5>`;
+                    
+                    if (typeof value === 'object') {
+                        html += '<ul>';
+                        Object.entries(value).forEach(([subKey, subValue]) => {
+                            html += `<li><strong>${subKey.replace(/_/g, ' ')}:</strong> ${subValue}</li>`;
+                        });
+                        html += '</ul>';
+                    } else {
+                        html += `<p>${value}</p>`;
+                    }
+                });
+            }
+            
+            content.innerHTML = html;
+            document.getElementById('analytics-loading').style.display = 'none';
+            document.getElementById('analytics-result').style.display = 'block';
+        }
+
+        // Initialize
+        console.log('🚀 FinSage Advanced loaded successfully!');
+    </script>
+</body>
+</html>
+

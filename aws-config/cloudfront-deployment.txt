@@ -1,0 +1,21 @@
+CloudFront Distribution Details
+==============================
+
+Distribution ID: EEO0TUYZPMVGW
+Frontend URL: https://dju1t116k25r5.cloudfront.net
+S3 Origin: finsage-frontend-1761204075.s3-website-us-east-1.amazonaws.com
+Status: Deployed
+Created: Thu Oct 23 18:26:11 AEDT 2025
+
+Features:
+- HTTPS enabled
+- Gzip compression
+- Error page redirects to index.html (for React Router)
+- Global edge locations
+- HTTP/2 support
+
+Next steps:
+1. Configure custom domain
+2. Set up SSL certificate
+3. Update CORS settings
+4. Test all features

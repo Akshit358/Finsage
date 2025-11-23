@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Proxy</title>
+</head>
+<body>
+    <script>
+        // This script will be embedded in the React app to handle API calls
+        window.FinSageAPI = {
+            baseURL: 'http://54.227.68.44:8000',
+            
+            async request(endpoint, options = {}) {
+                const url = `${this.baseURL}${endpoint}`;
+                const defaultOptions = {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                };
+                
+                const finalOptions = { ...defaultOptions, ...options };
+                
+                try {
+                    const response = await fetch(url, finalOptions);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    console.error('API request failed:', error);
+                    throw error;
+                }
+            },
+            
+            async getPortfolio(userId = 'user123') {
+                return this.request(`/api/v1/portfolio/${userId}`);
+            },
+            
+            async getPrediction(data) {
+                return this.request('/api/v1/prediction/predict', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+            },
+            
+            async getBlockchainStatus() {
+                return this.request('/api/v1/blockchain/status');
+            },
+            
+            async getCryptoPrices() {
+                return this.request('/api/v1/crypto/prices');
+            }
+        };
+    </script>
+</body>
+</html>

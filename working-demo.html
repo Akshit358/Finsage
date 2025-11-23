@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinSage - Working Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .header { text-align: center; color: white; margin-bottom: 30px; }
+        .header h1 { font-size: 3rem; margin-bottom: 10px; }
+        .header p { font-size: 1.2rem; opacity: 0.9; }
+        .tabs { display: flex; justify-content: center; margin-bottom: 30px; }
+        .tab { background: rgba(255,255,255,0.1); color: white; border: none; padding: 15px 30px; margin: 0 5px; border-radius: 25px; cursor: pointer; transition: all 0.3s; }
+        .tab.active { background: white; color: #667eea; }
+        .tab:hover { background: rgba(255,255,255,0.2); }
+        .content { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+        .hidden { display: none; }
+        .loading { text-align: center; padding: 20px; color: #666; }
+        .error { background: #ffebee; color: #c62828; padding: 15px; border-radius: 10px; margin: 10px 0; }
+        .success { background: #e8f5e8; color: #2e7d32; padding: 15px; border-radius: 10px; margin: 10px 0; }
+        .portfolio-card { background: #f8f9fa; padding: 20px; border-radius: 15px; margin: 15px 0; }
+        .portfolio-value { font-size: 2rem; font-weight: bold; color: #2e7d32; }
+        .prediction-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: bold; margin-bottom: 5px; color: #333; }
+        .form-group input, .form-group select { padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+        .btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 30px; border-radius: 25px; font-size: 16px; cursor: pointer; transition: all 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .recommendation { background: #e3f2fd; padding: 15px; border-radius: 10px; margin: 10px 0; border-left: 4px solid #2196f3; }
+        .asset { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 10px; margin: 10px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 FinSage</h1>
+            <p>AI-Powered Investment Platform</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('portfolio')">📊 Portfolio</button>
+            <button class="tab" onclick="showTab('prediction')">🤖 AI Prediction</button>
+            <button class="tab" onclick="showTab('market')">📈 Market Data</button>
+        </div>
+
+        <div class="content">
+            <!-- Portfolio Tab -->
+            <div id="portfolio" class="tab-content">
+                <h2>Portfolio Management</h2>
+                <div id="portfolio-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading portfolio data...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prediction Tab -->
+            <div id="prediction" class="tab-content hidden">
+                <h2>AI Investment Prediction</h2>
+                <div class="prediction-form">
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="age" value="30" min="18" max="80">
+                    </div>
+                    <div class="form-group">
+                        <label>Annual Income ($)</label>
+                        <input type="number" id="income" value="50000" min="20000">
+                    </div>
+                    <div class="form-group">
+                        <label>Financial Goals</label>
+                        <select id="goals">
+                            <option value="retirement">Retirement Planning</option>
+                            <option value="house">Buy a House</option>
+                            <option value="education">Education Fund</option>
+                            <option value="emergency">Emergency Fund</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Risk Tolerance</label>
+                        <select id="risk">
+                            <option value="conservative">Conservative</option>
+                            <option value="moderate" selected>Moderate</option>
+                            <option value="aggressive">Aggressive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Investment Horizon (years)</label>
+                        <input type="number" id="horizon" value="10" min="1" max="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Dependents</label>
+                        <input type="number" id="dependents" value="0" min="0" max="10">
+                    </div>
+                </div>
+                <button class="btn" onclick="getPrediction()" id="predict-btn">
+                    🚀 Get My Investment Strategy
+                </button>
+                <div id="prediction-result"></div>
+            </div>
+
+            <!-- Market Tab -->
+            <div id="market" class="tab-content hidden">
+                <h2>Market Data</h2>
+                <div id="market-content">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading market data...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://54.227.68.44:8000';
+        let currentTab = 'portfolio';
+
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.remove('hidden');
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            currentTab = tabName;
+
+            // Load data for the tab
+            if (tabName === 'portfolio') {
+                loadPortfolio();
+            } else if (tabName === 'market') {
+                loadMarketData();
+            }
+        }
+
+        async function loadPortfolio() {
+            const content = document.getElementById('portfolio-content');
+            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading portfolio data...</p></div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/portfolio/user123`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    content.innerHTML = `
+                        <div class="portfolio-card">
+                            <h3>Portfolio Summary</h3>
+                            <div class="portfolio-value">$${data.totalValue?.toLocaleString() || 'N/A'}</div>
+                            <p>Total Value</p>
+                            <div style="margin-top: 20px;">
+                                <p><strong>Total Return:</strong> ${data.totalGainPercent || 0}%</p>
+                                <p><strong>Positions:</strong> ${data.positions?.length || 0}</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3>Your Assets</h3>
+                            ${data.positions?.map(asset => `
+                                <div class="asset">
+                                    <div>
+                                        <strong>${asset.symbol}</strong>
+                                        <br><small>${asset.shares} shares</small>
+                                    </div>
+                                    <div>
+                                        <div>$${asset.currentPrice?.toLocaleString()}</div>
+                                        <div style="color: ${asset.return_percentage >= 0 ? 'green' : 'red'};">
+                                            ${asset.return_percentage >= 0 ? '+' : ''}${asset.return_percentage || 0}%
+                                        </div>
+                                    </div>
+                                </div>
+                            `).join('') || '<p>No assets found</p>'}
+                        </div>
+                    `;
+                } else {
+                    content.innerHTML = '<div class="error">❌ Failed to load portfolio data</div>';
+                }
+            } catch (error) {
+                console.error('Portfolio error:', error);
+                content.innerHTML = `<div class="error">❌ Error loading portfolio: ${error.message}</div>`;
+            }
+        }
+
+        async function getPrediction() {
+            const btn = document.getElementById('predict-btn');
+            const result = document.getElementById('prediction-result');
+            
+            btn.disabled = true;
+            btn.innerHTML = '🤖 Analyzing...';
+            result.innerHTML = '';
+
+            const data = {
+                age: parseInt(document.getElementById('age').value),
+                annual_income: parseInt(document.getElementById('income').value),
+                financial_goals: document.getElementById('goals').value,
+                risk_tolerance: document.getElementById('risk').value,
+                investment_horizon_years: parseInt(document.getElementById('horizon').value),
+                dependents: parseInt(document.getElementById('dependents').value),
+                debt_amount: 0,
+                monthly_expenses: 3000
+            };
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/prediction/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const resultData = await response.json();
+
+                if (response.ok && resultData.prediction) {
+                    result.innerHTML = `
+                        <div class="success">✅ AI prediction generated successfully!</div>
+                        <div class="recommendation">
+                            <h3>📈 Market Trend: ${resultData.prediction.marketTrend}</h3>
+                            <p><strong>Confidence:</strong> ${Math.round(resultData.prediction.confidence * 100)}%</p>
+                        </div>
+                        <div>
+                            <h3>🎯 Investment Recommendations</h3>
+                            ${resultData.prediction.recommendations?.map(rec => `
+                                <div class="recommendation">
+                                    <strong>${rec.symbol}</strong> - ${rec.action}
+                                    <br><small>Confidence: ${Math.round(rec.confidence * 100)}%</small>
+                                </div>
+                            `).join('') || '<p>No recommendations available</p>'}
+                        </div>
+                    `;
+                } else {
+                    result.innerHTML = '<div class="error">❌ Failed to generate prediction</div>';
+                }
+            } catch (error) {
+                console.error('Prediction error:', error);
+                result.innerHTML = `<div class="error">❌ Error: ${error.message}</div>`;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '🚀 Get My Investment Strategy';
+            }
+        }
+
+        async function loadMarketData() {
+            const content = document.getElementById('market-content');
+            content.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading market data...</p></div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/crypto/prices`);
+                const data = await response.json();
+
+                if (response.ok && data.cryptocurrencies) {
+                    content.innerHTML = `
+                        <h3>Cryptocurrency Prices</h3>
+                        ${data.cryptocurrencies.slice(0, 5).map(crypto => `
+                            <div class="asset">
+                                <div>
+                                    <strong>${crypto.symbol}</strong>
+                                    <br><small>${crypto.name}</small>
+                                </div>
+                                <div>
+                                    <div>$${crypto.price?.toLocaleString()}</div>
+                                    <div style="color: ${crypto.change_24h >= 0 ? 'green' : 'red'};">
+                                        ${crypto.change_24h >= 0 ? '+' : ''}${crypto.change_24h || 0}%
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    content.innerHTML = '<div class="error">❌ Failed to load market data</div>';
+                }
+            } catch (error) {
+                console.error('Market error:', error);
+                content.innerHTML = `<div class="error">❌ Error loading market data: ${error.message}</div>`;
+            }
+        }
+
+        // Load portfolio on page load
+        window.onload = function() {
+            loadPortfolio();
+        };
+    </script>
+</body>
+</html>
